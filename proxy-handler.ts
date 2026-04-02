@@ -60,7 +60,11 @@ export function proxy(req: NextRequest) {
 
   const isAllowed =
     path === "/" ||
-    ALLOWED_PREFIXES.some((p) => p !== "/" && (path === p || path.startsWith(p + "/")));
+    ALLOWED_PREFIXES.some((p) => {
+      if (p === "/") return false;
+      const base = p.replace(/\/$/, ""); // strip trailing slash if present
+      return path === base || path.startsWith(base + "/");
+    });
 
   // Any unrecognised path → send visitor to the funnel root
   if (!isAllowed) {
