@@ -79,6 +79,67 @@ const inputBase =
 const inputNormal = "border-gray-300 focus:border-amber-500 focus:ring-amber-500/50";
 const inputError  = "border-red-500 focus:border-red-500 focus:ring-red-500/40";
 
+// ── Custom dial-code dropdown (native <select> doesn't render flags on Windows) ──
+function DialDropdown({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (code: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = COUNTRY_CODES.find((c) => c.code === value) ?? COUNTRY_CODES[0];
+
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 h-full bg-gray-100 border-r border-gray-200 px-3 py-3 text-sm text-gray-800 focus:outline-none cursor-pointer"
+        style={{ minWidth: "92px" }}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span style={{ fontSize: 18, lineHeight: 1 }}>{selected.flag}</span>
+        <span>{selected.code}</span>
+        <svg className="ml-auto shrink-0" width="10" height="6" viewBox="0 0 10 6" fill="none">
+          <path d="M1 1L5 5L9 1" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {open && (
+        <div
+          className="absolute left-0 top-full z-50 mt-1 w-56 max-h-64 overflow-y-auto rounded-xl bg-white border border-gray-200 shadow-xl"
+          role="listbox"
+        >
+          {COUNTRY_CODES.map((c, i) => (
+            <button
+              key={i}
+              type="button"
+              role="option"
+              aria-selected={c.code === value && c.flag === selected.flag}
+              onClick={() => { onChange(c.code); setOpen(false); }}
+              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-800 hover:bg-amber-50 transition-colors text-left"
+            >
+              <span style={{ fontSize: 18, lineHeight: 1, width: 24, textAlign: "center" }}>{c.flag}</span>
+              <span className="text-gray-400 w-10 shrink-0 font-mono">{c.code}</span>
+              <span className="truncate">{c.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Field wrapper  must live at module scope so React never remounts inputs ──
 function Field({
   label, htmlFor, error, children,
@@ -398,19 +459,7 @@ export default function Section6LeadCapture({ sessionId, clickId, subId, quizAns
                   : "border-gray-300 focus-within:border-amber-500"
               }`}
             >
-              <select
-                value={dialCode}
-                onChange={(e) => setDialCode(e.target.value)}
-                aria-label="Country code"
-                className="shrink-0 bg-gray-100 text-gray-800 text-sm border-r border-gray-200 px-3 py-3 focus:outline-none cursor-pointer appearance-none"
-                style={{ minWidth: "92px" }}
-              >
-                {COUNTRY_CODES.map((c, i) => (
-                  <option key={i} value={c.code}>
-                    {c.flag} {c.code}
-                  </option>
-                ))}
-              </select>
+              <DialDropdown value={dialCode} onChange={setDialCode} />
               <input
                 id="ag-phone"
                 type="tel"
