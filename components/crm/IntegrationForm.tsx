@@ -56,6 +56,9 @@ const PLATFORMS = [
   { value: "activecampaign", label: "ActiveCampaign" },
   { value: "zoho", label: "Zoho CRM" },
   { value: "pipedrive", label: "Pipedrive" },
+  { value: "telegram", label: "Telegram Notification" },
+  { value: "slack", label: "Slack Notification" },
+  { value: "email_resend", label: "Email Notification (Resend)" },
 ];
 
 // Google Sheets Apps Script — default field mapping
@@ -120,6 +123,9 @@ const DEFAULT_FIELD_MAPPING = JSON.stringify(
   2
 );
 
+/** Platforms that send via their own protocol — hide generic HTTP fields */
+const NOTIFICATION_PLATFORMS = ["telegram", "slack", "email_resend"];
+
 export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
   const router = useRouter();
 
@@ -135,6 +141,12 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
       set("method", "POST");
       set("authType", "none");
       set("fieldMapping", GSHEETS_FIELD_MAPPING);
+    }
+    if (platform === "telegram" || platform === "slack" || platform === "email_resend") {
+      set("method", "POST");
+      set("authType", "none");
+      set("fieldMapping", "");
+      set("bodyTemplate", "");
     }
   };
 
@@ -502,6 +514,112 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
             </div>
           )}
 
+          {/* ── Telegram config ── */}
+          {form.platform === "telegram" && (
+            <div className="space-y-4">
+              <div className="rounded-xl p-4 space-y-2" style={{ background: "#eff6ff", border: "1px solid #93c5fd" }}>
+                <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#1e40af" }}>Telegram Setup Guide</p>
+                <ol className="text-xs space-y-1.5" style={{ color: "#1e3a8a" }}>
+                  <li>1. Open Telegram → search <strong>@BotFather</strong> → send <code>/newbot</code> → copy the <strong>Bot Token</strong></li>
+                  <li>2. Start a chat with your bot (or add it to a group)</li>
+                  <li>3. Visit <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code> to find your <strong>Chat ID</strong></li>
+                  <li>4. Private chat ID = positive number &middot; Group ID starts with <strong>-100…</strong></li>
+                </ol>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field label="Bot Token *">
+                  <input
+                    type="password"
+                    required
+                    value={form.authValue}
+                    onChange={(e) => set("authValue", e.target.value)}
+                    placeholder="123456:ABC-DEFGHIJKLMNabcdefghijk"
+                    {...inputProps}
+                  />
+                </Field>
+                <Field label="Chat ID or Group ID *">
+                  <input
+                    required
+                    value={form.endpoint}
+                    onChange={(e) => set("endpoint", e.target.value)}
+                    placeholder="-1001234567890"
+                    {...inputProps}
+                  />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* ── Slack config ── */}
+          {form.platform === "slack" && (
+            <div className="space-y-4">
+              <div className="rounded-xl p-4 space-y-2" style={{ background: "#fdf4ff", border: "1px solid #d8b4fe" }}>
+                <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#6b21a8" }}>Slack Setup Guide</p>
+                <ol className="text-xs space-y-1.5" style={{ color: "#581c87" }}>
+                  <li>1. Go to <strong>api.slack.com/apps</strong> → <strong>Create New App → From scratch</strong></li>
+                  <li>2. Click <strong>Incoming Webhooks → Activate → Add New Webhook to Workspace</strong></li>
+                  <li>3. Choose your notification channel → click <strong>Allow</strong></li>
+                  <li>4. Copy the <strong>Webhook URL</strong> (<code>https://hooks.slack.com/services/…</code>) and paste below</li>
+                </ol>
+              </div>
+              <Field label="Slack Incoming Webhook URL *">
+                <input
+                  required
+                  value={form.endpoint}
+                  onChange={(e) => set("endpoint", e.target.value)}
+                  placeholder="https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXX"
+                  {...inputProps}
+                />
+              </Field>
+            </div>
+          )}
+
+          {/* ── Email (Resend) config ── */}
+          {form.platform === "email_resend" && (
+            <div className="space-y-4">
+              <div className="rounded-xl p-4 space-y-2" style={{ background: "#fff7ed", border: "1px solid #fdba74" }}>
+                <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#c2410c" }}>Email via Resend — Setup Guide</p>
+                <ol className="text-xs space-y-1.5" style={{ color: "#7c2d12" }}>
+                  <li>1. Sign up free at <strong>resend.com</strong> (3,000 emails/month free)</li>
+                  <li>2. Go to <strong>API Keys → Create API Key</strong> → copy the key (starts with <code>re_</code>)</li>
+                  <li>3. Add &amp; verify your sending domain (or test with <code>onboarding@resend.dev</code>)</li>
+                  <li>4. Fill in the fields below — you&apos;ll receive an email on every new lead</li>
+                </ol>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                <Field label="Resend API Key *">
+                  <input
+                    type="password"
+                    required
+                    value={form.authValue}
+                    onChange={(e) => set("authValue", e.target.value)}
+                    placeholder="re_xxxxxxxxxxxx"
+                    {...inputProps}
+                  />
+                </Field>
+                <Field label="Notify Email (To) *">
+                  <input
+                    required
+                    value={form.endpoint}
+                    onChange={(e) => set("endpoint", e.target.value)}
+                    placeholder="admin@trade-pilot.net"
+                    {...inputProps}
+                  />
+                </Field>
+                <Field label="From Email">
+                  <input
+                    value={form.authHeader}
+                    onChange={(e) => set("authHeader", e.target.value)}
+                    placeholder="noreply@trade-pilot.net"
+                    {...inputProps}
+                  />
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* Generic HTTP config — hidden for notification-only platforms */}
+          {!NOTIFICATION_PLATFORMS.includes(form.platform) && (<>
           <div className="grid gap-4 md:grid-cols-3">
             <Field label="HTTP Method">
               <select
@@ -595,6 +713,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
               {...textareaProps}
             />
           </Field>
+          </>)}
 
           {/* Test section */}
           {isEdit && (

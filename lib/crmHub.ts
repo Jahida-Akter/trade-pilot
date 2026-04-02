@@ -178,12 +178,208 @@ export async function fetchLeadData(leadId: string): Promise<LeadData | null> {
   };
 }
 
-// ─── Deliver to a single integration ───────────────────────────────────────
+// ─── Telegram delivery ─────────────────────────────────────────────────────
+
+async function deliverViaTelegram(
+  integration: { id: string; name: string; endpoint: string; authValue: string },
+  lead: LeadData
+): Promise<DeliveryResult> {
+  const chatId = integration.endpoint;
+  const botToken = integration.authValue;
+  const tier = lead.qualityTier || "unknown";
+  const tierEmoji = tier === "hot" ? "🔥" : tier === "warm" ? "⚡" : "❄️";
+
+  const lines = [
+    `🔔 <b>New Lead — Trade Pilot</b>`,
+    ``,
+    `👤 <b>${lead.fullName}</b>`,
+    `📧 ${lead.email}`,
+    `📞 ${lead.phone}`,
+    `🌍 ${lead.country}`,
+    `${tierEmoji} Score: ${lead.qualityScore ?? "—"} (${tier})`,
+    lead.clickId ? `🔗 Click ID: <code>${lead.clickId}</code>` : null,
+    lead.sub1 ? `📌 Sub1: ${lead.sub1}` : null,
+    ``,
+    `🕐 ${new Date(lead.createdAt).toUTCString()}`,
+  ];
+  const text = lines.filter(Boolean).join("\n");
+  const requestBody = JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" });
+
+  const delivery = await prisma.crmDelivery.create({
+    data: {
+      integrationId: integration.id,
+      leadId: lead.id,
+      status: "PENDING",
+      requestUrl: "https://api.telegram.org/bot[TOKEN]/sendMessage",
+      requestMethod: "POST",
+      requestBody,
+    },
+  });
+
+  const start = Date.now();
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: requestBody,
+    });
+    const durationMs = Date.now() - start;
+    const responseBody = await res.text().catch(() => "");
+    const status: "SENT" | "FAILED" = res.ok ? "SENT" : "FAILED";
+    await prisma.crmDelivery.update({
+      where: { id: delivery.id },
+      data: { status, responseStatus: res.status, responseBody: responseBody.slice(0, 2000), durationMs, lastError: res.ok ? null : `HTTP ${res.status}` },
+    });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status, responseStatus: res.status, durationMs };
+  } catch (e: any) {
+    const durationMs = Date.now() - start;
+    const errMsg = String(e?.message || e);
+    await prisma.crmDelivery.update({ where: { id: delivery.id }, data: { status: "FAILED", durationMs, lastError: errMsg } });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status: "FAILED", durationMs, error: errMsg };
+  }
+}
+
+// ─── Slack delivery ───────────────────────────────────────────────────────────
+
+async function deliverViaSlack(
+  integration: { id: string; name: string; endpoint: string },
+  lead: LeadData
+): Promise<DeliveryResult> {
+  const tier = lead.qualityTier || "unknown";
+  const tierEmoji = tier === "hot" ? "🔥" : tier === "warm" ? "⚡" : "❄️";
+  const color = tier === "hot" ? "#ef4444" : tier === "warm" ? "#f59e0b" : "#6b7280";
+
+  const fields: Array<{ title: string; value: string; short: boolean }> = [
+    { title: "Name", value: lead.fullName, short: true },
+    { title: "Email", value: lead.email, short: true },
+    { title: "Phone", value: lead.phone, short: true },
+    { title: "Country", value: lead.country, short: true },
+    { title: "Score", value: `${lead.qualityScore ?? "—"} (${tier}) ${tierEmoji}`, short: true },
+  ];
+  if (lead.clickId) fields.push({ title: "Click ID", value: lead.clickId, short: true });
+  if (lead.sub1) fields.push({ title: "Sub1", value: lead.sub1, short: true });
+
+  const requestBody = JSON.stringify({
+    attachments: [{
+      color,
+      title: "🔔 New Lead — Trade Pilot",
+      title_link: `https://trade-pilot.net/admin/leads/${lead.id}`,
+      fields,
+      footer: "Trade Pilot",
+      ts: Math.floor(new Date(lead.createdAt).getTime() / 1000),
+    }],
+  });
+
+  const delivery = await prisma.crmDelivery.create({
+    data: {
+      integrationId: integration.id,
+      leadId: lead.id,
+      status: "PENDING",
+      requestUrl: integration.endpoint,
+      requestMethod: "POST",
+      requestBody,
+    },
+  });
+
+  const start = Date.now();
+  try {
+    const res = await fetch(integration.endpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: requestBody,
+    });
+    const durationMs = Date.now() - start;
+    const responseBody = await res.text().catch(() => "");
+    const status: "SENT" | "FAILED" = res.ok ? "SENT" : "FAILED";
+    await prisma.crmDelivery.update({
+      where: { id: delivery.id },
+      data: { status, responseStatus: res.status, responseBody: responseBody.slice(0, 2000), durationMs, lastError: res.ok ? null : `HTTP ${res.status}` },
+    });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status, responseStatus: res.status, durationMs };
+  } catch (e: any) {
+    const durationMs = Date.now() - start;
+    const errMsg = String(e?.message || e);
+    await prisma.crmDelivery.update({ where: { id: delivery.id }, data: { status: "FAILED", durationMs, lastError: errMsg } });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status: "FAILED", durationMs, error: errMsg };
+  }
+}
+
+// ─── Email delivery (Resend) ─────────────────────────────────────────────────
+
+async function deliverViaResend(
+  integration: { id: string; name: string; endpoint: string; authValue: string; authHeader: string },
+  lead: LeadData
+): Promise<DeliveryResult> {
+  const toEmail = integration.endpoint;
+  const apiKey = integration.authValue;
+  const fromEmail = integration.authHeader?.trim() || "noreply@trade-pilot.net";
+  const tier = lead.qualityTier || "unknown";
+  const tierColor = tier === "hot" ? "#ef4444" : tier === "warm" ? "#f59e0b" : "#6b7280";
+
+  const html = `<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
+  <h2 style="margin:0 0 16px;font-size:20px;color:#111827">🔔 New Lead — Trade Pilot</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #e5e7eb;border-radius:8px">
+    <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;width:120px;border-bottom:1px solid #e5e7eb">Name</td><td style="padding:10px 14px;font-weight:600;border-bottom:1px solid #e5e7eb">${lead.fullName}</td></tr>
+    <tr><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Email</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.email}</td></tr>
+    <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Phone</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.phone}</td></tr>
+    <tr><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Country</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.country}</td></tr>
+    <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Score</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb"><span style="background:${tierColor};color:#fff;padding:2px 8px;border-radius:4px;font-size:12px">${lead.qualityScore ?? "—"} ${tier.toUpperCase()}</span></td></tr>
+    ${lead.clickId ? `<tr><td style="padding:10px 14px;color:#6b7280">Click ID</td><td style="padding:10px 14px;font-family:monospace;font-size:12px">${lead.clickId}</td></tr>` : ""}
+  </table>
+  <div style="margin-top:24px">
+    <a href="https://trade-pilot.net/admin/leads/${lead.id}" style="background:#d97706;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:600">View Lead in Admin →</a>
+  </div>
+  <p style="margin-top:24px;font-size:11px;color:#9ca3af">${new Date(lead.createdAt).toUTCString()}</p>
+</div>`;
+
+  const requestBody = JSON.stringify({
+    from: fromEmail,
+    to: [toEmail],
+    subject: `🔔 New Lead: ${lead.fullName} (${lead.country}) — Score ${lead.qualityScore}`,
+    html,
+  });
+
+  const delivery = await prisma.crmDelivery.create({
+    data: {
+      integrationId: integration.id,
+      leadId: lead.id,
+      status: "PENDING",
+      requestUrl: "https://api.resend.com/emails",
+      requestMethod: "POST",
+      requestBody,
+    },
+  });
+
+  const start = Date.now();
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: requestBody,
+    });
+    const durationMs = Date.now() - start;
+    const responseBody = await res.text().catch(() => "");
+    const status: "SENT" | "FAILED" = res.ok ? "SENT" : "FAILED";
+    await prisma.crmDelivery.update({
+      where: { id: delivery.id },
+      data: { status, responseStatus: res.status, responseBody: responseBody.slice(0, 2000), durationMs, lastError: res.ok ? null : `HTTP ${res.status}` },
+    });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status, responseStatus: res.status, durationMs };
+  } catch (e: any) {
+    const durationMs = Date.now() - start;
+    const errMsg = String(e?.message || e);
+    await prisma.crmDelivery.update({ where: { id: delivery.id }, data: { status: "FAILED", durationMs, lastError: errMsg } });
+    return { deliveryId: delivery.id, integrationId: integration.id, integrationName: integration.name, status: "FAILED", durationMs, error: errMsg };
+  }
+}
+
+// ─── Deliver to a single integration ───────────────────────────────────────────
 
 async function deliverToIntegration(
   integration: {
     id: string;
     name: string;
+    platform: string;
     method: string;
     endpoint: string;
     authType: string;
@@ -195,6 +391,11 @@ async function deliverToIntegration(
   },
   lead: LeadData
 ): Promise<DeliveryResult> {
+  // Route notification-only platforms to specialized handlers
+  if (integration.platform === "telegram") return deliverViaTelegram(integration, lead);
+  if (integration.platform === "slack") return deliverViaSlack(integration, lead);
+  if (integration.platform === "email_resend") return deliverViaResend(integration, lead);
+
   const method = integration.method.toUpperCase();
 
   const mapped = buildMappedPayload(integration.fieldMapping, lead);
@@ -347,6 +548,7 @@ export async function pushLeadToAllIntegrations(
     select: {
       id: true,
       name: true,
+      platform: true,
       method: true,
       endpoint: true,
       authType: true,
@@ -401,6 +603,7 @@ export async function pushLeadToIntegration(
     select: {
       id: true,
       name: true,
+      platform: true,
       method: true,
       endpoint: true,
       authType: true,
