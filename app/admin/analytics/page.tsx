@@ -22,14 +22,17 @@ interface RecentVisitor {
   id:          string;
   createdAt:   string;
   lastSeenAt:  string;
+  ip:          string | null;
   country:     string;
   city:        string;
   region:      string;
   device:      string;
   os:          string;
   browser:     string;
+  userAgent:   string | null;
   currentStep: string;
   convertedAt: string | null;
+  sessionId:   string | null;
   utmSource:   string | null;
   utmMedium:   string | null;
   utmCampaign: string | null;
@@ -626,7 +629,7 @@ export default function AnalyticsPage() {
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
             Recent Visitors
             <span style={{ marginLeft: 8, fontSize: 11, color: "#94a3b8", fontWeight: 400 }}>
-              (last 50)
+              (last 100)
             </span>
           </h2>
         </div>
@@ -634,7 +637,7 @@ export default function AnalyticsPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-                {["Seen", "Country / City", "Device", "OS / Browser", "Step", "UTM / Ref", "Converted"].map((h) => (
+                {["Seen", "IP Address", "Location", "Device", "OS / Browser", "User Agent", "Step", "Session", "UTM / Ref", "Converted"].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -666,10 +669,26 @@ export default function AnalyticsPage() {
                     <div style={{ fontSize: 10, color: "#94a3b8" }}>{fmtDate(v.createdAt)} {fmtTime(v.createdAt)}</div>
                   </td>
 
-                  {/* Country / City */}
+                  {/* IP Address */}
                   <td style={{ padding: "8px 14px", whiteSpace: "nowrap" }}>
-                    <span style={{ fontWeight: 600, color: "#0f172a" }}>{v.country || "—"}</span>
-                    {v.city && <span style={{ color: "#94a3b8", marginLeft: 4 }}>{v.city}</span>}
+                    {v.ip ? (
+                      <code style={{ fontSize: 11, color: "#d97706", background: "#fef3c7", padding: "2px 6px", borderRadius: 4 }}>{v.ip}</code>
+                    ) : (
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                    )}
+                  </td>
+
+                  {/* Location */}
+                  <td style={{ padding: "8px 14px", whiteSpace: "nowrap" }}>
+                    <div style={{ fontWeight: 600, color: "#0f172a" }}>
+                      <span>{countryFlag(v.country)}</span>
+                      <span style={{ marginLeft: 4 }}>{v.country || "—"}</span>
+                    </div>
+                    {(v.city || v.region) && (
+                      <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
+                        {[v.city, v.region].filter(Boolean).join(", ")}
+                      </div>
+                    )}
                   </td>
 
                   {/* Device */}
@@ -681,6 +700,17 @@ export default function AnalyticsPage() {
                   <td style={{ padding: "8px 14px", whiteSpace: "nowrap", color: "#475569" }}>
                     <div>{v.os || "—"}</div>
                     <div style={{ fontSize: 10, color: "#94a3b8" }}>{v.browser}</div>
+                  </td>
+
+                  {/* User Agent */}
+                  <td style={{ padding: "8px 14px", maxWidth: 220 }}>
+                    {v.userAgent ? (
+                      <div style={{ fontSize: 10, color: "#64748b", wordBreak: "break-all", lineHeight: 1.4 }} title={v.userAgent}>
+                        {v.userAgent.slice(0, 80)}{v.userAgent.length > 80 ? "…" : ""}
+                      </div>
+                    ) : (
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                    )}
                   </td>
 
                   {/* Step */}
@@ -696,6 +726,20 @@ export default function AnalyticsPage() {
                     >
                       {v.currentStep}
                     </span>
+                    {v.landingPath && v.landingPath !== "/" && (
+                      <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>{v.landingPath}</div>
+                    )}
+                  </td>
+
+                  {/* Session */}
+                  <td style={{ padding: "8px 14px", whiteSpace: "nowrap" }}>
+                    {v.sessionId ? (
+                      <code style={{ fontSize: 10, color: "#6366f1", background: "#eef2ff", padding: "2px 5px", borderRadius: 4 }}>
+                        {v.sessionId.slice(0, 12)}…
+                      </code>
+                    ) : (
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                    )}
                   </td>
 
                   {/* UTM / Ref */}
@@ -729,7 +773,7 @@ export default function AnalyticsPage() {
               ))}
               {recent.length === 0 && (
                 <tr>
-                  <td colSpan={7} style={{ padding: 24, textAlign: "center", color: "#94a3b8" }}>
+                  <td colSpan={10} style={{ padding: 24, textAlign: "center", color: "#94a3b8" }}>
                     No visitor data yet — visit the funnel to start tracking.
                   </td>
                 </tr>

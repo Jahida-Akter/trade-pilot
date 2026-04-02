@@ -84,6 +84,7 @@ export async function POST(req: Request) {
         data: {
           lastSeenAt:  new Date(),
           currentStep,
+          ip,
           ...(sessionId && !existing.sessionId ? { sessionId } : {}),
           ...(converted && !existing.convertedAt ? { convertedAt: new Date() } : {}),
         },
@@ -91,6 +92,7 @@ export async function POST(req: Request) {
     } else {
       await prisma.visitor.create({
         data: {
+          ip,
           ipHash,
           sessionId,
           country,

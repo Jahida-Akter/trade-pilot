@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS "Visitor" (
   "id"          TEXT        PRIMARY KEY,
   "createdAt"   TIMESTAMPTZ NOT NULL DEFAULT now(),
   "lastSeenAt"  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "ip"          TEXT,
   "ipHash"      TEXT        NOT NULL,
   "sessionId"   TEXT,
   "country"     TEXT        NOT NULL DEFAULT '',
@@ -261,6 +262,13 @@ CREATE TABLE IF NOT EXISTS "OutboundCrmJob" (
   "idempotencyKey" TEXT        NOT NULL UNIQUE,
   "payload"        TEXT
 );
+
+
+-- ============================================================
+--  Upgrade migration (run this on an EXISTING database)
+--  Skip if running this script fresh — columns above already include them.
+-- ============================================================
+ALTER TABLE "Visitor" ADD COLUMN IF NOT EXISTS "ip" TEXT;
 
 
 -- ============================================================

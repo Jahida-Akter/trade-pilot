@@ -88,6 +88,7 @@ model Visitor {
   lastSeenAt  DateTime @default(now())
 
   // Identity
+  ip          String?  // real client IP (admin-only)
   ipHash      String
   sessionId   String?  // links to FunnelSession if started
 

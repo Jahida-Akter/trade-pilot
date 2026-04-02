@@ -90,13 +90,15 @@ export async function GET(req: Request) {
 
     prisma.visitor.findMany({
       orderBy: { lastSeenAt: "desc" },
-      take: 50,
+      take: 100,
       where: { isBot: false },
       select: {
-        id: true, createdAt: true, lastSeenAt: true, country: true,
-        city: true, region: true, device: true, os: true, browser: true,
-        currentStep: true, convertedAt: true, utmSource: true, utmMedium: true,
-        utmCampaign: true, referrer: true, landingPath: true,
+        id: true, createdAt: true, lastSeenAt: true,
+        ip: true, country: true, city: true, region: true,
+        device: true, os: true, browser: true, userAgent: true,
+        currentStep: true, convertedAt: true, sessionId: true,
+        utmSource: true, utmMedium: true, utmCampaign: true,
+        referrer: true, landingPath: true,
       },
     }),
 
