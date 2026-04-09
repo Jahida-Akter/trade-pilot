@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import type { Viewport } from "next";
 import type { Locale } from "@/lib/i18n";
 import { LocaleProvider } from "@/components/LocaleProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   // viewport-fit=cover allows content to extend behind iOS notch / Dynamic Island
@@ -124,6 +125,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
