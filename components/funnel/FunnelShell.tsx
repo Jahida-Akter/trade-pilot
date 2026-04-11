@@ -68,7 +68,7 @@ export default function FunnelShell() {
   const [step, setStep] = useState<AgStep>(() => {
     try {
       const s = sessionStorage.getItem("__tf_step") as AgStep | null;
-      if (s && s !== "BOT_GATE" && s !== "DONE") return s;
+      if (s && s !== "DONE") return s;
     } catch { /* ssr guard */ }
     return "S1_HOOK";
   });
