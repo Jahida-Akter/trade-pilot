@@ -24,6 +24,7 @@ const ALLOWED_PREFIXES = [
   "/api/",
   "/admin/",
   "/_next/",
+  "/_vercel/",
   "/robots.txt",
   "/sitemap.xml",
   "/favicon.ico",
