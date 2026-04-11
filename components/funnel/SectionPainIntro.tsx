@@ -4,82 +4,10 @@ import { useState, useEffect } from "react";
 import RiskDisclaimer from "@/components/funnel/RiskDisclaimer";
 import { useT } from "@/components/LocaleProvider";
 
-// ── Pain point data ───────────────────────────────────────────────────────────
-
-const PAIN_POINTS = [
-  {
-    icon: "💸",
-    title: "Taxes take 20–45% of everything you earn",
-    body: "Before you see a penny, governments take their slice. The average worker loses nearly a third of their income before it ever touches their bank account.",
-    stat: "£12,570 lost annually on an average UK salary just to tax.",
-  },
-  {
-    icon: "📈",
-    title: "Inflation is silently destroying your savings",
-    body: "Your bank pays you 0.1%. Inflation runs at 4–6%. Every year your savings sit still, they lose real value. Saving harder doesn't fix this problem.",
-    stat: "£10,000 saved today is worth £9,400 in real terms next year.",
-  },
-  {
-    icon: "⛽",
-    title: "Fuel, food, energy costs never stop rising",
-    body: "The price of everything you need keeps climbing. Your income doesn't keep pace. The gap between what you earn and what you spend grows wider every year.",
-    stat: "Average UK household bills rose by £1,800+ in a single year.",
-  },
-  {
-    icon: "⏰",
-    title: "Self-employed? You don't have time to trade",
-    body: "Running your own business already consumes 60+ hours a week. Sitting in front of charts watching candles move isn't an option. Yet your money is still working against you.",
-    stat: "67% of self-employed people have no active investment strategy.",
-  },
-  {
-    icon: "🏦",
-    title: "Your money in the bank is losing value every day",
-    body: "Banks don't reward loyalty they reward your deposits by paying you almost nothing. Meanwhile they lend that same money out at 8–25% interest. You're doing them a favour.",
-    stat: "High street banks average 0.1–1.5% interest vs 5%+ inflation.",
-  },
-  {
-    icon: "👴",
-    title: "Pension payouts barely cover the basics",
-    body: "Decades of contributions. A lifetime of work. And a pension that barely covers rent, food, and heating. The retirement you were promised doesn't stretch as far as it should.",
-    stat: "Average UK pension income: £13,000/year. Average living cost: £17,000.",
-  },
-];
-
 // ── Famous automation advocates ───────────────────────────────────────────────
 
-const ADVOCATES = [
-  {
-    name: "Jim Simons",
-    title: "Renaissance Technologies quantitative trading legend",
-    quote: "The Medallion Fund, run entirely by mathematical algorithms, averaged 66% annual returns over 30 years the greatest investing track record in history.",
-    tag: "66% annual returns · Purely algorithmic",
-    icon: "📐",
-  },
-  {
-    name: "Ray Dalio",
-    title: "Bridgewater Associates world's largest hedge fund",
-    quote:
-      "Dalio built Bridgewater on a system he calls 'The Machine' a set of algorithms and principles that remove human emotion from every investment decision.",
-    tag: "$160B AUM · Algorithm-first",
-    icon: "⚙️",
-  },
-  {
-    name: "Warren Buffett",
-    title: "Berkshire Hathaway world's most famous investor",
-    quote:
-      "\"The stock market is a device for transferring money from the impatient to the patient.\" Systems enforce patience. Humans almost never can.",
-    tag: "Discipline over emotion · Rules-based thinking",
-    icon: "🧠",
-  },
-  {
-    name: "Paul Tudor Jones",
-    title: "Tudor Investment Corp macro trading legend",
-    quote:
-      "Jones pioneered computer-driven systematic strategies in the 1980s and has consistently advocated for rules-based, emotion-free trade execution.",
-    tag: "Systematic strategies since the '80s",
-    icon: "📊",
-  },
-];
+const ADVOCATE_ICONS = ["📐", "⚙️", "🧠", "📊"];
+const ADVOCATE_NAMES = ["Jim Simons", "Ray Dalio", "Warren Buffett", "Paul Tudor Jones"];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -96,6 +24,12 @@ export default function SectionPainIntro({
     { icon: "⏰", title: t.s2b_p4_title, body: t.s2b_p4_body, stat: t.s2b_p4_stat },
     { icon: "🏦", title: t.s2b_p5_title, body: t.s2b_p5_body, stat: t.s2b_p5_stat },
     { icon: "👴", title: t.s2b_p6_title, body: t.s2b_p6_body, stat: t.s2b_p6_stat },
+  ];
+  const ADVOCATES = [
+    { name: ADVOCATE_NAMES[0], icon: ADVOCATE_ICONS[0], title: t.s2b_adv1_title, quote: t.s2b_adv1_quote, tag: t.s2b_adv1_tag },
+    { name: ADVOCATE_NAMES[1], icon: ADVOCATE_ICONS[1], title: t.s2b_adv2_title, quote: t.s2b_adv2_quote, tag: t.s2b_adv2_tag },
+    { name: ADVOCATE_NAMES[2], icon: ADVOCATE_ICONS[2], title: t.s2b_adv3_title, quote: t.s2b_adv3_quote, tag: t.s2b_adv3_tag },
+    { name: ADVOCATE_NAMES[3], icon: ADVOCATE_ICONS[3], title: t.s2b_adv4_title, quote: t.s2b_adv4_quote, tag: t.s2b_adv4_tag },
   ];
   const [revealed, setRevealed] = useState(false);
   const [counter, setCounter] = useState(0);

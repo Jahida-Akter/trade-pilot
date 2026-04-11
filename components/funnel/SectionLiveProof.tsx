@@ -320,7 +320,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
       {/* Header */}
       <div className="text-center space-y-2 pt-2">
         <div className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
-          Watch it trade live
+          {t.s2d_badge}
         </div>
         <h2 className="text-2xl font-bold text-gray-900 leading-tight">
           {t.s2d_headline}
@@ -340,7 +340,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         <div className="flex items-start justify-between">
           <div>
             <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">
-              Account Balance
+              {t.s2d_balance_label}
             </div>
             <div
               className={[
