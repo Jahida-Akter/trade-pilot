@@ -12,6 +12,5 @@ Disallow: /go
 Allow: /
 Allow: /privacy
 Allow: /terms
-Allow: /education
 
 # No sitemap — this is a private lead-capture funnel

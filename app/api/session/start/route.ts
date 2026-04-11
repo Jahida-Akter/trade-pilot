@@ -24,7 +24,14 @@ export async function POST(req: Request) {
   if (!rl.ok) return NextResponse.json({ ok: false, code: "RATE_LIMIT" }, { status: 429 });
 
   const body = await req.json().catch(() => ({}));
-  const country = typeof body.country === "string" && body.country.trim() ? body.country.trim() : "CA";
+  // Prefer Vercel/CF geo header (server-side, accurate) over client-supplied country
+  const geoCountry =
+    req.headers.get("x-vercel-ip-country") ||
+    req.headers.get("cf-ipcountry") ||
+    "";
+  const country =
+    geoCountry.trim().toUpperCase() ||
+    (typeof body.country === "string" && body.country.trim() ? body.country.trim().toUpperCase() : "CA");
 
   const userAgent = req.headers.get("user-agent") || null;
   const ipHash = hashIp(rl.ip);

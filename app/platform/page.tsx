@@ -18,19 +18,19 @@ export const dynamic = "force-static";
 export const metadata: Metadata = {
   title: "TradePilot — Algorithmic Trading Platform",
   description:
-    "TradePilot provides institutional-grade algorithmic trading signals and automated execution tools for retail traders. Start with a free analysis of your market today.",
+    "TradePilot provides algorithmic trading signals and automation tools for active traders. Explore the market with practical automation and risk-aware trade execution.",
   openGraph: {
     type: "website",
     title: "TradePilot — Algorithmic Trading Platform",
     description:
-      "Institutional-grade signals and automated execution for retail traders. Trusted by thousands of active traders worldwide.",
+      "Algorithmic trading signals and automation tools for active traders. Explore practical market intelligence with TradePilot.",
     siteName: "TradePilot",
   },
   twitter: {
     card: "summary_large_image",
     title: "TradePilot — Algorithmic Trading Platform",
     description:
-      "Algorithmic trading signals and automation tools for serious traders.",
+      "Algorithmic trading signals and automation tools for active traders.",
   },
   robots: {
     index: true,      // deliberately indexable — gives crawlers a valid page
@@ -41,41 +41,41 @@ export const metadata: Metadata = {
 const FEATURES = [
   {
     icon: "📊",
-    title: "Real-Time Market Signals",
-    body: "Our proprietary algorithms scan 50+ instruments simultaneously, delivering high-probability entries with defined risk parameters.",
+    title: "Market Signal Coverage",
+    body: "Market data and signal updates for a range of instruments, including Forex, commodities, and indices.",
   },
   {
     icon: "⚡",
-    title: "Automated Execution",
-    body: "Connect your broker via API and let TradePilot execute trades at machine speed — no emotion, no hesitation.",
+    title: "Execution Tools",
+    body: "Integrate with supported broker APIs and review execution options for signal-based trading.",
   },
   {
     icon: "🔒",
-    title: "Risk Management Built-In",
-    body: "Every signal comes with pre-calculated stop-loss and take-profit levels, position sizing, and portfolio exposure limits.",
+    title: "Risk Awareness",
+    body: "Signals are accompanied by risk guidelines such as stop-loss and position sizing considerations.",
   },
   {
     icon: "📈",
-    title: "Backtested Strategies",
-    body: "All strategies are backtested across 10+ years of historical data across multiple market cycles.",
+    title: "Strategy Review",
+    body: "Strategies are developed with historical market data and review processes to support signal design.",
   },
   {
     icon: "🌍",
     title: "Multi-Asset Coverage",
-    body: "Forex, commodities, indices, and crypto — trade the instruments that match your style and risk appetite.",
+    body: "Signal data is available for multiple asset classes, including Forex, commodities, and indices.",
   },
   {
     icon: "📱",
-    title: "Works on Any Device",
-    body: "Monitor your portfolio and receive alerts on desktop, mobile, or tablet. Your trading desk, anywhere.",
+    title: "Accessible on Any Device",
+    body: "Review signals and platform information from desktop, mobile, or tablet devices.",
   },
 ];
 
 const STATS = [
-  { value: "50,000+", label: "Active Traders" },
-  { value: "94.3%",   label: "Signal Accuracy (30d)" },
-  { value: "$2.1M",   label: "avg. Monthly Volume" },
-  { value: "< 8ms",   label: "Execution Latency" },
+  { value: "Built for active traders", label: "Practical automation" },
+  { value: "Market signal coverage", label: "Cross-asset intelligence" },
+  { value: "Broker integration ready", label: "Trading automation" },
+  { value: "Global market access", label: "Multi-asset support" },
 ];
 
 const FAQS = [
@@ -85,7 +85,7 @@ const FAQS = [
   },
   {
     q: "Do I need programming experience?",
-    a: "No. TradePilot is designed for active traders, not developers. The platform handles all automation through a simple point-and-click interface. Advanced users can optionally connect their own custom scripts.",
+    a: "No. TradePilot is designed for active traders, not developers. The platform handles automation through a simple interface, with advanced options available for experienced users.",
   },
   {
     q: "Is my capital safe?",
@@ -124,24 +124,24 @@ export default function PlatformPage() {
               Algorithmic Trading · Institutional Grade
             </div>
             <h1 style={{ fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 900, lineHeight: 1.1, margin: "0 0 20px", color: "#f1f5f9" }}>
-              Trade Smarter.<br />
-              <span style={{ color: "#f59e0b" }}>Let the Algorithm Work.</span>
+              Market signals for traders.<br />
+              <span style={{ color: "#f59e0b" }}>Data and execution support.</span>
             </h1>
             <p style={{ fontSize: 18, color: "#94a3b8", maxWidth: 560, margin: "0 auto 36px", lineHeight: 1.7 }}>
-              TradePilot delivers real-time algorithmic signals and automated execution across Forex, commodities, and indices — so you can focus on strategy, not screen time.
+              TradePilot provides market signal data and execution tools for Forex, commodities, and index trading. The page is informational and designed for browser-based review.
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
               <a
                 href="/"
                 style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0a0f1a", padding: "14px 32px", borderRadius: 12, fontWeight: 800, fontSize: 16, textDecoration: "none", display: "inline-block" }}
               >
-                Get Free Market Analysis
+                Learn More
               </a>
               <a
                 href="#features"
                 style={{ background: "rgba(255,255,255,0.06)", color: "#e2e8f0", padding: "14px 32px", borderRadius: 12, fontWeight: 600, fontSize: 16, textDecoration: "none", border: "1px solid rgba(255,255,255,0.1)", display: "inline-block" }}
               >
-                See Features
+                View Features
               </a>
             </div>
           </section>
@@ -220,15 +220,15 @@ export default function PlatformPage() {
           {/* ── CTA ── */}
           <section style={{ textAlign: "center", paddingBottom: 80 }}>
             <div style={{ background: "linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.04))", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 20, padding: "48px 32px", maxWidth: 640, margin: "0 auto" }}>
-              <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f1f5f9", marginBottom: 12 }}>Ready to trade smarter?</h2>
+              <h2 style={{ fontSize: 26, fontWeight: 800, color: "#f1f5f9", marginBottom: 12 }}>Platform overview</h2>
               <p style={{ color: "#64748b", fontSize: 15, marginBottom: 28 }}>
-                Join over 50,000 traders who use TradePilot to execute with precision and discipline.
+                TradePilot provides information about trading signal data, execution tools, and broker integration options.
               </p>
               <a
                 href="/"
                 style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", color: "#0a0f1a", padding: "14px 36px", borderRadius: 12, fontWeight: 800, fontSize: 16, textDecoration: "none", display: "inline-block" }}
               >
-                Start Free — No Credit Card
+                Learn More
               </a>
             </div>
           </section>

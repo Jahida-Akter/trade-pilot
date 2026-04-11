@@ -7,7 +7,6 @@ import type { FunnelSessionClient } from "@/lib/funnel/types";
 import { postJSON } from "@/lib/apiClient";
 
 // ── New aggressive funnel sections ───────────────────────────────────────────
-import BotGate            from "@/components/funnel/BotGate";
 import SocialProofTicker  from "@/components/funnel/SocialProofTicker";
 import ExitIntentModal    from "@/components/funnel/ExitIntentModal";
 import Section1Hook       from "@/components/funnel/Section1Hook";
@@ -22,7 +21,6 @@ import Section6LeadCapture from "@/components/funnel/Section6LeadCapture";
 
 // ── Local funnel step type (isolated from legacy FunnelState) ───────────────
 type AgStep =
-  | "BOT_GATE"    // invisible bot check
   | "S1_HOOK"     // explosive headline + live profit counter
   | "S2_PAIN"     // pain identification
   | "S2B_INTRO"   // pain points deep-dive + TradePilot introduction
@@ -72,7 +70,7 @@ export default function FunnelShell() {
       const s = sessionStorage.getItem("__tf_step") as AgStep | null;
       if (s && s !== "BOT_GATE" && s !== "DONE") return s;
     } catch { /* ssr guard */ }
-    return "BOT_GATE";
+    return "S1_HOOK";
   });
   const [painChoice, setPainChoice] = useState<"WATCHING" | "TRIED" | "NO_TIME">(() => {
     try {
@@ -149,9 +147,8 @@ export default function FunnelShell() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Analytics: update step whenever it changes (skip initial BOT_GATE)
+  // Analytics: update step whenever it changes
   useEffect(() => {
-    if (step === "BOT_GATE") return;
     postJSON("/api/analytics/track", {
       sessionId:   state.sessionId,
       currentStep: step,
@@ -172,8 +169,8 @@ export default function FunnelShell() {
   function Shell({ children }: { children: React.ReactNode }) {
     return (
       <div className="relative min-h-screen bg-white text-gray-900">
-        {/* Global ticker - shown after bot gate */}
-        {step !== "BOT_GATE" && <SocialProofTicker />}
+        {/* Global ticker */}
+        <SocialProofTicker />
 
         {/* Exit-intent modal: closes and lets user continue wherever they are in the funnel */}
         <ExitIntentModal
@@ -185,24 +182,6 @@ export default function FunnelShell() {
         <div className="mx-auto max-w-xl px-4 sm:px-6 py-5 sm:py-8 md:py-12">
           {children}
         </div>
-      </div>
-    );
-  }
-
-  // ── Step: BOT_GATE ─────────────────────────────────────────────────────────
-  if (step === "BOT_GATE") {
-    return (
-      <div className="min-h-screen bg-white">
-        {/* Show real content immediately  gate runs invisibly in background */}
-        <div className="mx-auto max-w-xl px-4 sm:px-6 py-5 sm:py-8 md:py-12">
-          <div className="space-y-4">
-            {/* Skeleton/teaser so real users see something while gate evaluates */}
-            <div className="h-6 w-2/3 rounded-lg bg-gray-200 animate-pulse" />
-            <div className="h-4 w-full rounded-lg bg-gray-200/60 animate-pulse" />
-            <div className="h-4 w-5/6 rounded-lg bg-gray-200/40 animate-pulse" />
-          </div>
-        </div>
-        <BotGate onPass={() => advance("S1_HOOK")} />
       </div>
     );
   }
