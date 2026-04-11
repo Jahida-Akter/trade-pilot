@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useState, useCallback } from "react";
+import { useEffect, useMemo, useReducer, useState, useCallback, useRef } from "react";
 import { loadSession, saveSession } from "@/lib/funnel/storage";
 import { reducer } from "@/lib/funnel/reducer";
 import type { FunnelSessionClient } from "@/lib/funnel/types";
@@ -90,6 +90,7 @@ export default function FunnelShell() {
     } catch { /* ssr guard */ }
     return [];
   });
+  const landingMetaRef = useRef<{ landingPath: string; referrer: string | null; utmSource: string | null; utmMedium: string | null; utmCampaign: string | null } | null>(null);
 
   // Persist session
   useEffect(() => { saveSession(state); }, [state]);
@@ -132,27 +133,30 @@ export default function FunnelShell() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Analytics: track visitor on mount (fires once)
+  // Capture immutable landing metadata once and attach it to every analytics ping.
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
-    postJSON("/api/analytics/track", {
-      sessionId:   state.sessionId,
+    landingMetaRef.current = {
       landingPath: window.location.pathname,
-      currentStep: "S1_HOOK",
-      referrer:    document.referrer || null,
-      utmSource:   p.get("utm_source")   || null,
-      utmMedium:   p.get("utm_medium")   || null,
+      referrer: document.referrer || null,
+      utmSource: p.get("utm_source") || null,
+      utmMedium: p.get("utm_medium") || null,
       utmCampaign: p.get("utm_campaign") || null,
-    }).catch(() => {/* non-fatal */});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
   }, []);
 
   // Analytics: update step whenever it changes
   useEffect(() => {
+    const meta = landingMetaRef.current;
     postJSON("/api/analytics/track", {
       sessionId:   state.sessionId,
       currentStep: step,
       converted:   step === "DONE",
+      landingPath: meta?.landingPath ?? window.location.pathname,
+      referrer: meta?.referrer ?? null,
+      utmSource: meta?.utmSource ?? null,
+      utmMedium: meta?.utmMedium ?? null,
+      utmCampaign: meta?.utmCampaign ?? null,
     }).catch(() => {/* non-fatal */});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);

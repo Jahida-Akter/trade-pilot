@@ -71,12 +71,22 @@ export async function POST(req: Request) {
     const currentStep = typeof body.currentStep === "string" ? body.currentStep.slice(0, 100) : "S1_HOOK";
     const sessionId   = typeof body.sessionId   === "string" ? body.sessionId.slice(0, 200)   : null;
     const converted   = body.converted === true;
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    // Upsert: one row per ipHash, update step + lastSeen on each call
-    const existing = await prisma.visitor.findFirst({
-      where: { ipHash },
-      orderBy: { createdAt: "asc" },
-    });
+    // Prefer session-based identity. Fallback to a recent IP-based row only when sessionId is unavailable.
+    let existing = null as Awaited<ReturnType<typeof prisma.visitor.findFirst>>;
+    if (sessionId) {
+      existing = await prisma.visitor.findFirst({ where: { sessionId } });
+    }
+    if (!existing) {
+      existing = await prisma.visitor.findFirst({
+        where: {
+          ipHash,
+          createdAt: { gte: oneDayAgo },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }
 
     if (existing) {
       await prisma.visitor.update({
@@ -86,6 +96,14 @@ export async function POST(req: Request) {
           currentStep,
           ip,
           ...(sessionId && !existing.sessionId ? { sessionId } : {}),
+          ...(country && !existing.country ? { country } : {}),
+          ...(city && !existing.city ? { city } : {}),
+          ...(region && !existing.region ? { region } : {}),
+          ...(referrer && !existing.referrer ? { referrer } : {}),
+          ...(utmSource && !existing.utmSource ? { utmSource } : {}),
+          ...(utmMedium && !existing.utmMedium ? { utmMedium } : {}),
+          ...(utmCampaign && !existing.utmCampaign ? { utmCampaign } : {}),
+          ...(landingPath && (!existing.landingPath || existing.landingPath === "/") ? { landingPath } : {}),
           ...(converted && !existing.convertedAt ? { convertedAt: new Date() } : {}),
         },
       });
