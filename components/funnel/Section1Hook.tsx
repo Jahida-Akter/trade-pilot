@@ -103,10 +103,17 @@ export default function Section1Hook({ onContinue }: Props) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/dashboard-mockup.svg"
-          alt="Sponsored"
+          alt={t.s1_sponsored}
           className="h-10 w-10 rounded-lg object-cover shrink-0"
         />
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Sponsored</span>
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">{t.s1_sponsored}</span>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 text-xs text-gray-400">
+        <span>
+          {t.s1_by_label} <span className="font-semibold text-gray-600">James Fletcher</span> · {t.s1_author_desk}
+        </span>
+        <span>{t.s1_published_today}</span>
       </div>
 
       {/* ── Live badge ───────────────────────────────────────────────────── */}
@@ -214,7 +221,7 @@ export default function Section1Hook({ onContinue }: Props) {
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#f0a500" }}>
                 {t.s1_challenge_title}
               </span>
-              <span className="text-xs text-gray-400">{viewers} watching</span>
+              <span className="text-xs text-gray-400">{t.watching.replace("{n}", String(viewers))}</span>
           </div>
         </div>
         <div className="px-5 py-5 space-y-3">

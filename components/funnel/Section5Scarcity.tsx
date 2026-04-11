@@ -73,7 +73,7 @@ export default function Section5Scarcity({ onContinue }: Props) {
       >
         <span className="text-base shrink-0 mt-0.5">🔗</span>
         <p className="text-xs text-amber-900 leading-relaxed">
-          <span className="font-bold">Direct access: </span>
+          <span className="font-bold">{t.s5_direct_access_label} </span>
           {t.s5_direct_note}
         </p>
       </div>

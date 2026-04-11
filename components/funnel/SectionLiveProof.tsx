@@ -396,7 +396,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
           </div>
           {tradeCount > 0 && (
             <div className="text-xs text-gray-400">
-              {tradeCount} trade{tradeCount > 1 ? "s" : ""} closed &nbsp; · &nbsp; {tradeCount}/{tradeCount} wins
+              {tradeCount} {t.s2d_trades_closed} &nbsp; · &nbsp; {tradeCount}/{tradeCount} {t.s2d_wins_label}
             </div>
           )}
         </div>
@@ -614,7 +614,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
           {phase === "running" && (
             <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2 py-0.5 text-[10px] font-bold text-white">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              LIVE
+              {t.live}
             </div>
           )}
         </div>
@@ -623,14 +623,14 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         <div className="bg-[#0d0d0d] px-4 py-2 border-t border-[#1a1a1a] flex items-center justify-between">
           <div className="flex items-center gap-4 text-[10px] font-mono">
             <span className="flex items-center gap-1 text-emerald-500">
-              <span>▲</span> BUY signal
+              <span>▲</span> {t.s2d_chart_buy_signal}
             </span>
             <span className="flex items-center gap-1 text-emerald-400">
-              <span className="inline-block w-3 h-0.5 bg-emerald-400" /> Profit taken
+              <span className="inline-block w-3 h-0.5 bg-emerald-400" /> {t.s2d_chart_profit_taken}
             </span>
           </div>
           <div className="text-[10px] text-gray-600 font-mono">
-            {visibleCount}/{CANDLES.length} candles
+            {visibleCount}/{CANDLES.length} {t.s2d_chart_candles}
           </div>
         </div>
       </div>
@@ -639,9 +639,9 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
       {phase === "idle" && (
         <div className="grid grid-cols-3 gap-2 text-center">
           {[
-            ["👁️", "Bot watches", "Every price movement, 24/7"],
-            ["⚡", "Spots opportunity", "Detects the right moment automatically"],
-            ["💰", "Locks profit", "Exits the trade at your target price"],
+            ["👁️", t.s2d_idle_step1_title, t.s2d_idle_step1_desc],
+            ["⚡", t.s2d_idle_step2_title, t.s2d_idle_step2_desc],
+            ["💰", t.s2d_idle_step3_title, t.s2d_idle_step3_desc],
           ].map(([icon, title, desc]) => (
             <div key={title} className="rounded-xl bg-gray-50 border border-gray-200 px-2 py-3">
               <div className="text-xl mb-1">{icon}</div>
@@ -656,7 +656,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
       {phase === "done" && (
         <div className="rounded-2xl bg-emerald-50 border-2 border-emerald-200 px-5 py-5 space-y-4">
           <div className="text-xs font-bold uppercase tracking-widest text-emerald-600">
-            Simulation complete
+            {t.s2d_sim_complete}
           </div>
           <div className="flex items-end justify-between">
             <div>

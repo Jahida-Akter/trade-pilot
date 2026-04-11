@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useT } from "@/components/LocaleProvider";
 
 /* ── Seed data ─────────────────────────────────────────────────────────────── */
 interface Reply {
@@ -118,13 +119,13 @@ const LIVE_COMMENTS: Omit<Comment, "id">[] = [
 ];
 
 /* ── Helpers ───────────────────────────────────────────────────────────────── */
-function fmtAge(minutes: number): string {
-  if (minutes < 1)  return "just now";
-  if (minutes < 60) return `${minutes} min ago`;
+function fmtAge(minutes: number, t: ReturnType<typeof useT>): string {
+  if (minutes < 1) return t.comments_just_now;
+  if (minutes < 60) return t.comments_min_ago.replace("{n}", String(minutes));
   const h = Math.floor(minutes / 60);
-  if (h < 24)       return `${h} hr ago`;
+  if (h < 24) return t.comments_hr_ago.replace("{n}", String(h));
   const d = Math.floor(h / 24);
-  return `${d} day${d !== 1 ? "s" : ""} ago`;
+  return (d === 1 ? t.comments_day_ago : t.comments_days_ago).replace("{n}", String(d));
 }
 
 function Avatar({ name, photoUrl, size = "md" }: { name: string; photoUrl?: string; size?: "sm" | "md" }) {
@@ -168,6 +169,7 @@ function Avatar({ name, photoUrl, size = "md" }: { name: string; photoUrl?: stri
 
 /* ── Main component ─────────────────────────────────────────────────────────── */
 export default function CommentsSection() {
+  const t = useT();
   const [comments, setComments] = useState<Comment[]>(() =>
     SEED_COMMENTS.map((c) => ({ ...c, likes: c.likes + Math.floor(Math.random() * 8) }))
   );
@@ -220,7 +222,7 @@ export default function CommentsSection() {
 
   function handlePost() {
     const text = draftText.trim();
-    const name = draftName.trim() || "Anonymous";
+    const name = draftName.trim() || t.comments_anonymous;
     if (!text) return;
     setPosting(true);
     window.setTimeout(() => {
@@ -252,34 +254,34 @@ export default function CommentsSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-base font-bold text-gray-900">
-          Community <span className="text-gray-400 font-normal text-sm">({totalComments} comments)</span>
+          {t.comments_title} <span className="text-gray-400 font-normal text-sm">({t.comments_count_label.replace("{n}", String(totalComments))})</span>
         </h3>
         <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-          Live
+          {t.comments_live}
         </span>
       </div>
 
       {/* Post a comment */}
       <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 space-y-3">
-        <p className="text-xs text-gray-400 font-medium uppercase tracking-widest">Add your comment</p>
+        <p className="text-xs text-gray-400 font-medium uppercase tracking-widest">{t.comments_add_label}</p>
         <input
           type="text"
           value={draftName}
           onChange={(e) => setDraftName(e.target.value)}
-          placeholder="Your name (optional)"
+          placeholder={t.comments_name_ph}
           className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 transition"
         />
         <textarea
           value={draftText}
           onChange={(e) => setDraftText(e.target.value)}
-          placeholder="Share your thoughts or ask a question…"
+          placeholder={t.comments_text_ph}
           rows={3}
           className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 transition resize-none"
         />
         <div className="flex items-center justify-between gap-3">
           {posted && (
-            <p className="text-xs text-emerald-400 font-medium">✓ Comment posted!</p>
+            <p className="text-xs text-emerald-400 font-medium">✓ {t.comments_posted}</p>
           )}
           {!posted && <span />}
           <button
@@ -288,8 +290,8 @@ export default function CommentsSection() {
             className="shrink-0 rounded-xl btn-emerald-gradient px-4 py-2 text-sm font-bold text-white disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all duration-150 flex items-center gap-2"
           >
             {posting ? (
-              <><span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-black/30 border-t-black" /> Posting…</>
-            ) : "Post comment"}
+              <><span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-black/30 border-t-black" /> {t.comments_posting}</>
+            ) : t.comments_post_btn}
           </button>
         </div>
       </div>
@@ -310,17 +312,17 @@ export default function CommentsSection() {
                   }}
                 >
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-1.5">
-                    <span className="text-sm font-semibold text-gray-800">{c.author}</span>
+                    <span className="text-sm font-semibold text-gray-800">{c.author === "Support Team" ? t.comments_team_label : c.author}</span>
                     {c.location && <span className="text-xs text-gray-400">{c.location}</span>}
                     {c.author === "Support Team" && (
-                        <span className="rounded-full bg-emerald-100 px-2 py-px text-xs font-bold text-emerald-700">Team</span>
+                        <span className="rounded-full bg-emerald-100 px-2 py-px text-xs font-bold text-emerald-700">{t.comments_team_label}</span>
                     )}
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed">{c.text}</p>
                 </div>
                 {/* Actions row */}
                 <div className="flex items-center gap-4 mt-1.5 px-1">
-                  <span className="text-xs text-gray-400">{fmtAge(c.minutesAgo)}</span>
+                  <span className="text-xs text-gray-400">{fmtAge(c.minutesAgo, t)}</span>
                   <button
                     onClick={() => handleLike(c.id)}
                     className="flex items-center gap-1 text-xs text-gray-400 hover:text-rose-500 transition-colors"
@@ -336,8 +338,10 @@ export default function CommentsSection() {
                       className="text-xs text-gray-400 hover:text-emerald-600 transition-colors"
                     >
                       {expanded.has(c.id)
-                        ? "Hide replies"
-                        : `${c.replies.length} repl${c.replies.length === 1 ? "y" : "ies"} ↓`}
+                        ? t.comments_hide_replies
+                        : (c.replies.length === 1
+                          ? t.comments_reply_one.replace("{n}", String(c.replies.length))
+                          : t.comments_reply_many.replace("{n}", String(c.replies.length)))}
                     </button>
                   )}
                 </div>
@@ -357,15 +361,15 @@ export default function CommentsSection() {
                     }}
                   >
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-1">
-                      <span className="text-xs font-semibold text-gray-800">{r.author}</span>
+                      <span className="text-xs font-semibold text-gray-800">{r.author === "Support Team" ? t.comments_team_label : r.author}</span>
                       {r.author === "Support Team" && (
-                        <span className="rounded-full bg-emerald-100 px-1.5 py-px text-xs font-bold text-emerald-700">Team</span>
+                        <span className="rounded-full bg-emerald-100 px-1.5 py-px text-xs font-bold text-emerald-700">{t.comments_team_label}</span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 leading-relaxed">{r.text}</p>
                   </div>
                   <div className="flex items-center gap-3 mt-1 px-1">
-                    <span className="text-xs text-gray-400">{fmtAge(r.minutesAgo)}</span>
+                    <span className="text-xs text-gray-400">{fmtAge(r.minutesAgo, t)}</span>
                     <span className="flex items-center gap-1 text-xs text-gray-400">
                       <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -380,7 +384,7 @@ export default function CommentsSection() {
         ))}
       </div>
 
-      <p className="text-center text-xs text-neutral-700">Comments are moderated. Real community members only.</p>
+      <p className="text-center text-xs text-neutral-700">{t.comments_moderated_note}</p>
     </div>
   );
 }

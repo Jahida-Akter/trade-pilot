@@ -323,6 +323,44 @@ export type T = {
   // S2D – withdrawal log panel
   s2d_withdrawal_title: string;
   s2d_withdrawal_verified: string;
+  // S2D – remaining hardcoded strings
+  s2d_sim_complete: string;
+  s2d_trades_closed: string;
+  s2d_wins_label: string;
+  s2d_idle_step1_title: string; s2d_idle_step1_desc: string;
+  s2d_idle_step2_title: string; s2d_idle_step2_desc: string;
+  s2d_idle_step3_title: string; s2d_idle_step3_desc: string;
+  s2d_chart_buy_signal: string;
+  s2d_chart_profit_taken: string;
+  s2d_chart_candles: string;
+  // S5 – direct access label
+  s5_direct_access_label: string;
+  // S1 – author bar
+  s1_published_today: string;
+  // CommentsSection UI
+  comments_title: string;
+  comments_live: string;
+  comments_add_label: string;
+  comments_name_ph: string;
+  comments_text_ph: string;
+  comments_posted: string;
+  comments_posting: string;
+  comments_post_btn: string;
+  comments_hide_replies: string;
+  comments_reply_one: string;   // "{n} reply ↓"
+  comments_reply_many: string;  // "{n} replies ↓"
+  comments_just_now: string;
+  comments_min_ago: string;     // "{n} min ago"
+  comments_hr_ago: string;      // "{n} hr ago"
+  comments_day_ago: string;     // "{n} day ago"
+  comments_days_ago: string;    // "{n} days ago"
+  comments_count_label: string; // "{n} comments"
+  comments_team_label: string;
+  comments_moderated_note: string;
+  comments_anonymous: string;
+  s1_sponsored: string;
+  s1_by_label: string;
+  s1_author_desk: string;
 };
 
 // ── ENGLISH ───────────────────────────────────────────────────────────────────
@@ -653,6 +691,40 @@ const en: T = {
   s5_direct_note: "You're accessing via a direct registration link  this bypasses the public waitlist and reserves your spot immediately. Once you leave this page, this spot cannot be guaranteed.",
   s2d_withdrawal_title: "Recent withdrawals from your region",
   s2d_withdrawal_verified: "verified · real accounts",
+  s2d_sim_complete: "Simulation complete",
+  s2d_trades_closed: "trades closed",
+  s2d_wins_label: "wins",
+  s2d_idle_step1_title: "Bot watches", s2d_idle_step1_desc: "Every price movement, 24/7",
+  s2d_idle_step2_title: "Spots opportunity", s2d_idle_step2_desc: "Detects the right moment automatically",
+  s2d_idle_step3_title: "Locks profit", s2d_idle_step3_desc: "Exits the trade at your target price",
+  s2d_chart_buy_signal: "BUY signal",
+  s2d_chart_profit_taken: "Profit taken",
+  s2d_chart_candles: "candles",
+  s5_direct_access_label: "Direct access:",
+  s1_published_today: "Published today",
+  comments_title: "Community",
+  comments_live: "Live",
+  comments_add_label: "Add your comment",
+  comments_name_ph: "Your name (optional)",
+  comments_text_ph: "Share your thoughts or ask a question...",
+  comments_posted: "Comment posted!",
+  comments_posting: "Posting...",
+  comments_post_btn: "Post comment",
+  comments_hide_replies: "Hide replies",
+  comments_reply_one: "{n} reply ↓",
+  comments_reply_many: "{n} replies ↓",
+  comments_just_now: "just now",
+  comments_min_ago: "{n} min ago",
+  comments_hr_ago: "{n} hr ago",
+  comments_day_ago: "{n} day ago",
+  comments_days_ago: "{n} days ago",
+  comments_count_label: "{n} comments",
+  comments_team_label: "Team",
+  comments_moderated_note: "Comments are moderated. Real community members only.",
+  comments_anonymous: "Anonymous",
+  s1_sponsored: "Sponsored",
+  s1_by_label: "by",
+  s1_author_desk: "Tech & Finance Desk",
 };
 
 // ── ITALIAN ───────────────────────────────────────────────────────────────────
@@ -977,6 +1049,40 @@ const it: T = {
   s5_direct_note: "Stai accedendo tramite un link di registrazione diretto  questo bypassa la lista d'attesa pubblica e riserva il tuo posto immediatamente. Una volta che lasci questa pagina, questo posto non può essere garantito.",
   s2d_withdrawal_title: "Prelievi recenti dalla tua regione",
   s2d_withdrawal_verified: "verificato · account reali",
+  s2d_sim_complete: "Simulazione completata",
+  s2d_trades_closed: "trade chiusi",
+  s2d_wins_label: "vincenti",
+  s2d_idle_step1_title: "Il bot osserva", s2d_idle_step1_desc: "Ogni movimento di prezzo, 24/7",
+  s2d_idle_step2_title: "Individua l'opportunit\u00e0", s2d_idle_step2_desc: "Rileva il momento giusto automaticamente",
+  s2d_idle_step3_title: "Blocca il profitto", s2d_idle_step3_desc: "Esce dal trade al prezzo target",
+  s2d_chart_buy_signal: "Segnale ACQUISTO",
+  s2d_chart_profit_taken: "Profitto incassato",
+  s2d_chart_candles: "candele",
+  s5_direct_access_label: "Accesso diretto:",
+  s1_published_today: "Pubblicato oggi",
+  comments_title: "Comunit\u00e0",
+  comments_live: "Live",
+  comments_add_label: "Aggiungi un commento",
+  comments_name_ph: "Il tuo nome (facoltativo)",
+  comments_text_ph: "Condividi i tuoi pensieri o fai una domanda...",
+  comments_posted: "Commento pubblicato!",
+  comments_posting: "Pubblicazione...",
+  comments_post_btn: "Pubblica",
+  comments_hide_replies: "Nascondi risposte",
+  comments_reply_one: "{n} risposta ↓",
+  comments_reply_many: "{n} risposte ↓",
+  comments_just_now: "adesso",
+  comments_min_ago: "{n} min fa",
+  comments_hr_ago: "{n} ore fa",
+  comments_day_ago: "{n} giorno fa",
+  comments_days_ago: "{n} giorni fa",
+  comments_count_label: "{n} commenti",
+  comments_team_label: "Team",
+  comments_moderated_note: "I commenti sono moderati. Solo membri reali della community.",
+  comments_anonymous: "Anonimo",
+  s1_sponsored: "Sponsorizzato",
+  s1_by_label: "di",
+  s1_author_desk: "Redazione Tech & Finanza",
 };
 
 // ── GERMAN ────────────────────────────────────────────────────────────────────
@@ -1301,6 +1407,40 @@ const de: T = {
   s5_direct_note: "Du nutzt einen direkten Registrierungslink  dieser umgeht die öffentliche Warteliste und reserviert deinen Platz sofort. Sobald du diese Seite verlässt, kann dieser Platz nicht garantiert werden.",
   s2d_withdrawal_title: "Aktuelle Auszahlungen aus deiner Region",
   s2d_withdrawal_verified: "verifiziert · echte Konten",
+  s2d_sim_complete: "Simulation abgeschlossen",
+  s2d_trades_closed: "Trades geschlossen",
+  s2d_wins_label: "gewonnen",
+  s2d_idle_step1_title: "Bot beobachtet", s2d_idle_step1_desc: "Jede Preisbewegung, 24/7",
+  s2d_idle_step2_title: "Erkennt Chancen", s2d_idle_step2_desc: "Erkennt den richtigen Moment automatisch",
+  s2d_idle_step3_title: "Sichert den Gewinn", s2d_idle_step3_desc: "Schlie\u00dft den Trade am Zielkurs",
+  s2d_chart_buy_signal: "KAUF-Signal",
+  s2d_chart_profit_taken: "Gewinn gesichert",
+  s2d_chart_candles: "Kerzen",
+  s5_direct_access_label: "Direktzugang:",
+  s1_published_today: "Heute ver\u00f6ffentlicht",
+  comments_title: "Community",
+  comments_live: "Live",
+  comments_add_label: "Kommentar hinterlassen",
+  comments_name_ph: "Dein Name (optional)",
+  comments_text_ph: "Teile deine Gedanken oder stelle eine Frage...",
+  comments_posted: "Kommentar ver\u00f6ffentlicht!",
+  comments_posting: "Wird ver\u00f6ffentlicht...",
+  comments_post_btn: "Kommentieren",
+  comments_hide_replies: "Antworten ausblenden",
+  comments_reply_one: "{n} Antwort ↓",
+  comments_reply_many: "{n} Antworten ↓",
+  comments_just_now: "gerade eben",
+  comments_min_ago: "vor {n} Min.",
+  comments_hr_ago: "vor {n} Std.",
+  comments_day_ago: "vor {n} Tag",
+  comments_days_ago: "vor {n} Tagen",
+  comments_count_label: "{n} Kommentare",
+  comments_team_label: "Team",
+  comments_moderated_note: "Kommentare werden moderiert. Nur echte Community-Mitglieder.",
+  comments_anonymous: "Anonym",
+  s1_sponsored: "Gesponsert",
+  s1_by_label: "von",
+  s1_author_desk: "Tech- & Finanzredaktion",
 };
 
 // ── FRENCH ────────────────────────────────────────────────────────────────────
@@ -1623,8 +1763,42 @@ const fr: T = {
   s1_adv2: "Aucune expérience requise",
   s1_adv3: "Retrait sous 24–48h",
   s5_direct_note: "Tu accèdes via un lien d'inscription direct  il contourne la liste d'attente publique et réserve ta place immédiatement. Une fois que tu quittes cette page, cette place ne peut être garantie.",
-  s2d_withdrawal_title: "Retraits récents dans ta région",
-  s2d_withdrawal_verified: "vérifié · comptes réels",
+  s2d_withdrawal_title: "Retraits r\u00e9cents dans ta r\u00e9gion",
+  s2d_withdrawal_verified: "v\u00e9rifi\u00e9 · comptes r\u00e9els",
+  s2d_sim_complete: "Simulation termin\u00e9e",
+  s2d_trades_closed: "trades ferm\u00e9s",
+  s2d_wins_label: "gagnants",
+  s2d_idle_step1_title: "Le bot surveille", s2d_idle_step1_desc: "Chaque mouvement de prix, 24h/24",
+  s2d_idle_step2_title: "D\u00e9tecte l'opportunit\u00e9", s2d_idle_step2_desc: "Identifie le bon moment automatiquement",
+  s2d_idle_step3_title: "S\u00e9curise le profit", s2d_idle_step3_desc: "Sort du trade au prix cible",
+  s2d_chart_buy_signal: "Signal ACHAT",
+  s2d_chart_profit_taken: "Profit encaiss\u00e9",
+  s2d_chart_candles: "bougies",
+  s5_direct_access_label: "Acc\u00e8s direct :",
+  s1_published_today: "Publi\u00e9 aujourd'hui",
+  comments_title: "Communaut\u00e9",
+  comments_live: "En direct",
+  comments_add_label: "Ajouter un commentaire",
+  comments_name_ph: "Ton pr\u00e9nom (facultatif)",
+  comments_text_ph: "Partage tes r\u00e9flexions ou pose une question...",
+  comments_posted: "Commentaire publi\u00e9 !",
+  comments_posting: "Publication...",
+  comments_post_btn: "Publier",
+  comments_hide_replies: "Masquer les r\u00e9ponses",
+  comments_reply_one: "{n} r\u00e9ponse ↓",
+  comments_reply_many: "{n} r\u00e9ponses ↓",
+  comments_just_now: "\u00e0 l'instant",
+  comments_min_ago: "il y a {n} min",
+  comments_hr_ago: "il y a {n} h",
+  comments_day_ago: "il y a {n} jour",
+  comments_days_ago: "il y a {n} jours",
+  comments_count_label: "{n} commentaires",
+  comments_team_label: "Équipe",
+  comments_moderated_note: "Les commentaires sont modérés. Uniquement de vrais membres de la communauté.",
+  comments_anonymous: "Anonyme",
+  s1_sponsored: "Sponsorisé",
+  s1_by_label: "par",
+  s1_author_desk: "Rédaction Tech & Finance",
 };
 
 // ── SPANISH ───────────────────────────────────────────────────────────────────
@@ -1947,8 +2121,42 @@ const es: T = {
   s1_adv2: "Sin experiencia necesaria",
   s1_adv3: "Retira en 24–48h",
   s5_direct_note: "Estás accediendo a través de un enlace de registro directo  esto evita la lista de espera pública y reserva tu lugar inmediatamente. Una vez que abandones esta página, este lugar no puede garantizarse.",
-  s2d_withdrawal_title: "Retiros recientes en tu región",
+  s2d_withdrawal_title: "Retiros recientes en tu regi\u00f3n",
   s2d_withdrawal_verified: "verificado · cuentas reales",
+  s2d_sim_complete: "Simulaci\u00f3n completada",
+  s2d_trades_closed: "operaciones cerradas",
+  s2d_wins_label: "ganadoras",
+  s2d_idle_step1_title: "El bot observa", s2d_idle_step1_desc: "Cada movimiento de precio, 24/7",
+  s2d_idle_step2_title: "Detecta oportunidad", s2d_idle_step2_desc: "Identifica el momento exacto autom\u00e1ticamente",
+  s2d_idle_step3_title: "Asegura el beneficio", s2d_idle_step3_desc: "Sale del trade al precio objetivo",
+  s2d_chart_buy_signal: "Se\u00f1al COMPRA",
+  s2d_chart_profit_taken: "Beneficio tomado",
+  s2d_chart_candles: "velas",
+  s5_direct_access_label: "Acceso directo:",
+  s1_published_today: "Publicado hoy",
+  comments_title: "Comunidad",
+  comments_live: "En vivo",
+  comments_add_label: "A\u00f1adir un comentario",
+  comments_name_ph: "Tu nombre (opcional)",
+  comments_text_ph: "Comparte tus ideas o haz una pregunta...",
+  comments_posted: "¡Comentario publicado!",
+  comments_posting: "Publicando...",
+  comments_post_btn: "Publicar",
+  comments_hide_replies: "Ocultar respuestas",
+  comments_reply_one: "{n} respuesta ↓",
+  comments_reply_many: "{n} respuestas ↓",
+  comments_just_now: "ahora mismo",
+  comments_min_ago: "hace {n} min",
+  comments_hr_ago: "hace {n} h",
+  comments_day_ago: "hace {n} d\u00eda",
+  comments_days_ago: "hace {n} d\u00edas",
+  comments_count_label: "{n} comentarios",
+  comments_team_label: "Equipo",
+  comments_moderated_note: "Los comentarios están moderados. Solo miembros reales de la comunidad.",
+  comments_anonymous: "Anónimo",
+  s1_sponsored: "Patrocinado",
+  s1_by_label: "por",
+  s1_author_desk: "Redacción Tech y Finanzas",
 };
 
 // ── Export ────────────────────────────────────────────────────────────────────
