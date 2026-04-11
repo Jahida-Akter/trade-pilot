@@ -34,6 +34,7 @@ export default function Section1Hook({ onContinue }: Props) {
   const [mindAnswer, setMindAnswer] = useState<"nothing" | "works" | null>(null);
   const [feedIdx, setFeedIdx]       = useState(0);
   const [feedVisible, setFeedVisible] = useState(true);
+  const [showSticky, setShowSticky]   = useState(false);
   const feedTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -82,6 +83,13 @@ export default function Section1Hook({ onContinue }: Props) {
       }, 350);
     }, 3200);
     return () => { if (feedTimer.current) clearInterval(feedTimer.current); };
+  }, []);
+
+  // Sticky bottom CTA: show after user scrolls past the hero
+  useEffect(() => {
+    const onScroll = () => setShowSticky(window.scrollY > 320);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -429,6 +437,31 @@ export default function Section1Hook({ onContinue }: Props) {
       <p className="animate-fade-in delay-700 text-center text-xs text-gray-400">
         {t.s1_cta_sub}
       </p>
+
+      {/* ── Sticky bottom CTA — always visible after scrolling ─────────── */}
+      {showSticky && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50"
+          style={{
+            background: "linear-gradient(to top, rgba(255,255,255,0.97) 80%, transparent)",
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingBottom: "max(16px, env(safe-area-inset-bottom))",
+            paddingTop: 12,
+          }}
+        >
+          <div className="mx-auto max-w-xl">
+            <button
+              onClick={onContinue}
+              className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-extrabold text-black flex items-center justify-center gap-2"
+              style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
+            >
+              {t.s1_cta_main}
+              <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
