@@ -113,9 +113,9 @@ type Mode = "all" | "whitelist" | "blacklist";
 interface Config { mode: Mode; countries: string[]; updatedAt: string | null }
 
 const MODE_INFO = {
-  all:       { label: "Public — All Countries",        color: "#10b981", desc: "Funnel is accessible from every country." },
-  whitelist: { label: "Whitelist — Selected Only",     color: "#3b82f6", desc: "Only visitors from the listed countries can access the funnel." },
-  blacklist: { label: "Blacklist — Block Selected",    color: "#ef4444", desc: "Visitors from the listed countries are redirected to /restricted." },
+  all:       { label: "Public  All Countries",        color: "#10b981", desc: "Funnel is accessible from every country." },
+  whitelist: { label: "Whitelist  Selected Only",     color: "#3b82f6", desc: "Only visitors from the listed countries can access the funnel." },
+  blacklist: { label: "Blacklist  Block Selected",    color: "#ef4444", desc: "Visitors from the listed countries are redirected to /restricted." },
 };
 
 export default function GeoPage() {
@@ -437,11 +437,11 @@ export default function GeoPage() {
         <p style={{ margin: 0, fontSize: 13, color: "#64748b" }}>
           <strong style={{ color: "#0f172a" }}>Current rule: </strong>
           {mode === "all" && "All countries can access the funnel."}
-          {mode === "whitelist" && selected.size === 0 && "⚠️ Whitelist mode with no countries selected — all traffic will be blocked!"}
+          {mode === "whitelist" && selected.size === 0 && "⚠️ Whitelist mode with no countries selected  all traffic will be blocked!"}
           {mode === "whitelist" && selected.size > 0 && (
             <>Only <strong>{selected.size} {selected.size === 1 ? "country" : "countries"}</strong> can access the funnel: {[...selected].sort().map((code) => `${flag(code)} ${code}`).join("  ")}</>
           )}
-          {mode === "blacklist" && selected.size === 0 && "Blacklist mode with no countries selected — effectively public for all."}
+          {mode === "blacklist" && selected.size === 0 && "Blacklist mode with no countries selected  effectively public for all."}
           {mode === "blacklist" && selected.size > 0 && (
             <><strong>{selected.size} {selected.size === 1 ? "country" : "countries"}</strong> will be redirected to /restricted: {[...selected].sort().map((code) => `${flag(code)} ${code}`).join("  ")}</>
           )}

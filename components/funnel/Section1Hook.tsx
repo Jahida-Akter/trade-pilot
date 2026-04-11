@@ -454,7 +454,7 @@ export default function Section1Hook({ onContinue }: Props) {
         {t.s1_cta_sub}
       </p>
 
-      {/* ── Sticky bottom CTA — always visible after scrolling ─────────── */}
+      {/* ── Sticky bottom CTA  always visible after scrolling ─────────── */}
       {showSticky && (
         <div
           className="fixed bottom-0 left-0 right-0 z-50"

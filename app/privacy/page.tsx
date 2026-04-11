@@ -94,15 +94,15 @@ export default function PrivacyPage() {
         <p style={{ fontSize: 14, color: "#4b5563", marginBottom: 8 }}>We use both Session and Persistent Cookies for the purposes set out below:</p>
         <ul style={{ fontSize: 14, color: "#4b5563", paddingLeft: 24, marginBottom: 16, lineHeight: 1.9 }}>
           <li>
-            <strong>Necessary / Essential Cookies</strong> — Type: Session Cookies — Administered by: Us.<br />
+            <strong>Necessary / Essential Cookies</strong>  Type: Session Cookies  Administered by: Us.<br />
             Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts.
           </li>
           <li>
-            <strong>Cookies Policy / Notice Acceptance Cookies</strong> — Type: Persistent Cookies — Administered by: Us.<br />
+            <strong>Cookies Policy / Notice Acceptance Cookies</strong>  Type: Persistent Cookies  Administered by: Us.<br />
             Purpose: These Cookies identify if users have accepted the use of cookies on the Website.
           </li>
           <li>
-            <strong>Functionality Cookies</strong> — Type: Persistent Cookies — Administered by: Us.<br />
+            <strong>Functionality Cookies</strong>  Type: Persistent Cookies  Administered by: Us.<br />
             Purpose: These Cookies allow Us to remember choices You make when You use the Website, such as remembering your login details or language preference, to provide You with a more personal experience.
           </li>
         </ul>
@@ -145,7 +145,7 @@ export default function PrivacyPage() {
 
         <h3 style={{ fontSize: 16, fontWeight: 700, color: "#111827", marginBottom: 8, marginTop: 24 }}>Transfer of Your Personal Data</h3>
         <p style={{ fontSize: 14, color: "#4b5563", marginBottom: 16 }}>
-          Your information, including Personal Data, is processed at the Company&apos;s operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those of Your jurisdiction.
+          Your information, including Personal Data, is processed at the Company&apos;s operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to  and maintained on  computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those of Your jurisdiction.
           Where required by applicable law, We will ensure that international transfers of Your Personal Data are subject to appropriate safeguards. The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy.
         </p>
 
@@ -187,15 +187,15 @@ export default function PrivacyPage() {
         <p style={{ fontSize: 14, color: "#4b5563", marginBottom: 8 }}>We may use third-party Service Providers to maintain and improve our Service:</p>
         <ul style={{ fontSize: 14, color: "#4b5563", paddingLeft: 24, marginBottom: 16, lineHeight: 1.9 }}>
           <li>
-            <strong>Mouseflow</strong> — A session replay and heatmap tool that shows how visitors click, move, scroll, browse, and pay attention on websites. Operated by ApS.
+            <strong>Mouseflow</strong>  A session replay and heatmap tool that shows how visitors click, move, scroll, browse, and pay attention on websites. Operated by ApS.
             Information gathered by Mouseflow is held in accordance with its Privacy Policy at mouseflow.com/privacy/
           </li>
           <li>
-            <strong>FreshDesk</strong> — A customer support software operated by Freshworks, Inc.
+            <strong>FreshDesk</strong>  A customer support software operated by Freshworks, Inc.
             Information gathered by FreshDesk is held in accordance with its Privacy Policy at freshworks.com/privacy/
           </li>
           <li>
-            <strong>Google Places</strong> — A service that returns information about places using HTTP requests, operated by Google.
+            <strong>Google Places</strong>  A service that returns information about places using HTTP requests, operated by Google.
             Information gathered by Google Places is held in accordance with Google&apos;s Privacy Policy at google.com/intl/en/policies/privacy/
           </li>
         </ul>

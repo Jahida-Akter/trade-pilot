@@ -178,7 +178,7 @@ export default async function AdminLeadsPage({
                     <div className="text-xs mt-0.5" style={{ color: "#6b7280" }}>{l.phone || "-"}</div>
                   </td>
                   <td className="px-4 py-3.5 text-sm" style={{ color: "#374151" }}>
-                    {l.country || "—"}
+                    {l.country || ""}
                   </td>
                   <td className="px-4 py-3.5">
                     <Pill kind={status === "converted" ? "good" : status === "continued" ? "mid" : "low"}>

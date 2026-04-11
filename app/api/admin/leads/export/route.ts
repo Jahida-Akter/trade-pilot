@@ -149,7 +149,7 @@ export async function GET(req: Request) {
 
   const dateStr = new Date().toISOString().slice(0, 10);
 
-  // ── Excel (SpreadsheetML XML — opens natively in Excel as .xls) ───────────
+  // ── Excel (SpreadsheetML XML  opens natively in Excel as .xls) ───────────
   if (format === "excel") {
     function xmlEsc(v: unknown): string {
       return String(v ?? "")

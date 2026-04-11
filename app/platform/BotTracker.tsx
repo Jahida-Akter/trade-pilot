@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /**
- * Fires once on mount — reads ?b= from the URL (set by middleware)
+ * Fires once on mount  reads ?b= from the URL (set by middleware)
  * and pings /api/analytics/bot-hit to record the bot visit.
  */
 export default function BotTracker() {

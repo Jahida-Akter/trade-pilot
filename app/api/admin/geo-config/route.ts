@@ -8,7 +8,7 @@ const Body = z.object({
   countries: z.array(z.string().regex(/^[A-Z]{2}$/)).max(250),
 });
 
-/** GET /api/admin/geo-config — returns current geo restriction settings */
+/** GET /api/admin/geo-config  returns current geo restriction settings */
 export async function GET(req: Request) {
   const auth = await requireAdminSession(req);
   if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
   });
 }
 
-/** PUT /api/admin/geo-config — saves geo restriction settings */
+/** PUT /api/admin/geo-config  saves geo restriction settings */
 export async function PUT(req: Request) {
   const auth = await requireAdminSession(req);
   if (!auth.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

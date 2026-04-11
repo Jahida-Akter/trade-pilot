@@ -190,13 +190,13 @@ async function deliverViaTelegram(
   const tierEmoji = tier === "hot" ? "🔥" : tier === "warm" ? "⚡" : "❄️";
 
   const lines = [
-    `🔔 <b>New Lead — Trade Pilot</b>`,
+    `🔔 <b>New Lead  Trade Pilot</b>`,
     ``,
     `👤 <b>${lead.fullName}</b>`,
     `📧 ${lead.email}`,
     `📞 ${lead.phone}`,
     `🌍 ${lead.country}`,
-    `${tierEmoji} Score: ${lead.qualityScore ?? "—"} (${tier})`,
+    `${tierEmoji} Score: ${lead.qualityScore ?? ""} (${tier})`,
     lead.clickId ? `🔗 Click ID: <code>${lead.clickId}</code>` : null,
     lead.sub1 ? `📌 Sub1: ${lead.sub1}` : null,
     ``,
@@ -254,7 +254,7 @@ async function deliverViaSlack(
     { title: "Email", value: lead.email, short: true },
     { title: "Phone", value: lead.phone, short: true },
     { title: "Country", value: lead.country, short: true },
-    { title: "Score", value: `${lead.qualityScore ?? "—"} (${tier}) ${tierEmoji}`, short: true },
+    { title: "Score", value: `${lead.qualityScore ?? ""} (${tier}) ${tierEmoji}`, short: true },
   ];
   if (lead.clickId) fields.push({ title: "Click ID", value: lead.clickId, short: true });
   if (lead.sub1) fields.push({ title: "Sub1", value: lead.sub1, short: true });
@@ -262,7 +262,7 @@ async function deliverViaSlack(
   const requestBody = JSON.stringify({
     attachments: [{
       color,
-      title: "🔔 New Lead — Trade Pilot",
+      title: "🔔 New Lead  Trade Pilot",
       title_link: `https://trade-pilot.net/admin/leads/${lead.id}`,
       fields,
       footer: "Trade Pilot",
@@ -317,13 +317,13 @@ async function deliverViaResend(
   const tierColor = tier === "hot" ? "#ef4444" : tier === "warm" ? "#f59e0b" : "#6b7280";
 
   const html = `<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px">
-  <h2 style="margin:0 0 16px;font-size:20px;color:#111827">🔔 New Lead — Trade Pilot</h2>
+  <h2 style="margin:0 0 16px;font-size:20px;color:#111827">🔔 New Lead  Trade Pilot</h2>
   <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #e5e7eb;border-radius:8px">
     <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;width:120px;border-bottom:1px solid #e5e7eb">Name</td><td style="padding:10px 14px;font-weight:600;border-bottom:1px solid #e5e7eb">${lead.fullName}</td></tr>
     <tr><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Email</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.email}</td></tr>
     <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Phone</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.phone}</td></tr>
     <tr><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Country</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb">${lead.country}</td></tr>
-    <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Score</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb"><span style="background:${tierColor};color:#fff;padding:2px 8px;border-radius:4px;font-size:12px">${lead.qualityScore ?? "—"} ${tier.toUpperCase()}</span></td></tr>
+    <tr style="background:#f9fafb"><td style="padding:10px 14px;color:#6b7280;border-bottom:1px solid #e5e7eb">Score</td><td style="padding:10px 14px;border-bottom:1px solid #e5e7eb"><span style="background:${tierColor};color:#fff;padding:2px 8px;border-radius:4px;font-size:12px">${lead.qualityScore ?? ""} ${tier.toUpperCase()}</span></td></tr>
     ${lead.clickId ? `<tr><td style="padding:10px 14px;color:#6b7280">Click ID</td><td style="padding:10px 14px;font-family:monospace;font-size:12px">${lead.clickId}</td></tr>` : ""}
   </table>
   <div style="margin-top:24px">
@@ -335,7 +335,7 @@ async function deliverViaResend(
   const requestBody = JSON.stringify({
     from: fromEmail,
     to: [toEmail],
-    subject: `🔔 New Lead: ${lead.fullName} (${lead.country}) — Score ${lead.qualityScore}`,
+    subject: `🔔 New Lead: ${lead.fullName} (${lead.country})  Score ${lead.qualityScore}`,
     html,
   });
 

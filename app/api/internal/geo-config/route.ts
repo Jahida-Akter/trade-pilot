@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
  * settings from the database. Cached for 60 seconds at the CDN and Next.js
  * fetch cache layer so the middleware's own module-level cache is just a backup.
  *
- * NOT auth-protected — only returns the public mode + country list,
+ * NOT auth-protected  only returns the public mode + country list,
  * never admin credentials or private data.
  */
 export async function GET() {

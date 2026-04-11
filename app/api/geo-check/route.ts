@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ allowed }, { headers: { "Cache-Control": "no-store" } });
   } catch {
-    // Fail open — never block a real user due to a DB error
+    // Fail open  never block a real user due to a DB error
     return NextResponse.json({ allowed: true }, { headers: { "Cache-Control": "no-store" } });
   }
 }

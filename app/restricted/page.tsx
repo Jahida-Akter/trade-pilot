@@ -1,5 +1,5 @@
 /**
- * /restricted — shown to visitors from blocked countries.
+ * /restricted  shown to visitors from blocked countries.
  *
  * Completely isolated page: no funnel imports, no DB, force-static.
  */

@@ -186,7 +186,7 @@ function HourlyChart({ data }: { data: number[] }) {
               opacity: h > now ? 0.35 : 1,
               transition: "height 0.5s ease",
             }}
-            title={`${h}:00 — ${v} visitors`}
+            title={`${h}:00  ${v} visitors`}
           />
         );
       })}
@@ -245,7 +245,7 @@ export default function AnalyticsPage() {
     if (!silent) setLoading(true);
     try {
       const res = await fetch("/api/analytics/stats", { credentials: "include" });
-      if (res.status === 401) { setErr("Not authorised — please log in."); return; }
+      if (res.status === 401) { setErr("Not authorised  please log in."); return; }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json() as StatsData;
       setData(json);
@@ -673,7 +673,7 @@ export default function AnalyticsPage() {
                     {v.ip ? (
                       <code style={{ fontSize: 11, color: "#d97706", background: "#fef3c7", padding: "2px 6px", borderRadius: 4 }}>{v.ip}</code>
                     ) : (
-                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}></span>
                     )}
                   </td>
 
@@ -681,7 +681,7 @@ export default function AnalyticsPage() {
                   <td style={{ padding: "8px 14px", whiteSpace: "nowrap" }}>
                     <div style={{ fontWeight: 600, color: "#0f172a" }}>
                       <span>{countryFlag(v.country)}</span>
-                      <span style={{ marginLeft: 4 }}>{v.country || "—"}</span>
+                      <span style={{ marginLeft: 4 }}>{v.country || ""}</span>
                     </div>
                     {(v.city || v.region) && (
                       <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 1 }}>
@@ -697,7 +697,7 @@ export default function AnalyticsPage() {
 
                   {/* OS / Browser */}
                   <td style={{ padding: "8px 14px", whiteSpace: "nowrap", color: "#475569" }}>
-                    <div>{v.os || "—"}</div>
+                    <div>{v.os || ""}</div>
                     <div style={{ fontSize: 10, color: "#94a3b8" }}>{v.browser}</div>
                   </td>
 
@@ -708,7 +708,7 @@ export default function AnalyticsPage() {
                         {v.userAgent.slice(0, 80)}{v.userAgent.length > 80 ? "…" : ""}
                       </div>
                     ) : (
-                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}></span>
                     )}
                   </td>
 
@@ -737,7 +737,7 @@ export default function AnalyticsPage() {
                         {v.sessionId.slice(0, 12)}…
                       </code>
                     ) : (
-                      <span style={{ color: "#cbd5e1", fontSize: 11 }}>—</span>
+                      <span style={{ color: "#cbd5e1", fontSize: 11 }}></span>
                     )}
                   </td>
 
@@ -765,7 +765,7 @@ export default function AnalyticsPage() {
                     {v.convertedAt ? (
                       <span style={{ color: "#10b981", fontWeight: 700 }}>Yes</span>
                     ) : (
-                      <span style={{ color: "#cbd5e1" }}>—</span>
+                      <span style={{ color: "#cbd5e1" }}></span>
                     )}
                   </td>
                 </tr>
@@ -773,7 +773,7 @@ export default function AnalyticsPage() {
               {recent.length === 0 && (
                 <tr>
                   <td colSpan={10} style={{ padding: 24, textAlign: "center", color: "#94a3b8" }}>
-                    No visitor data yet — visit the funnel to start tracking.
+                    No visitor data yet  visit the funnel to start tracking.
                   </td>
                 </tr>
               )}

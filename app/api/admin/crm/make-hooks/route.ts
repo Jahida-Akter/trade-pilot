@@ -1,7 +1,7 @@
 /**
  * GET /api/admin/crm/make-hooks?token=TOKEN&zone=https://eu1.make.com
  *
- * Proxy to Make.com REST API — lists the caller's webhook hooks.
+ * Proxy to Make.com REST API  lists the caller's webhook hooks.
  * We never store the Make API token; it's passed per-request.
  *
  * Make API docs: https://developers.make.com/api-documentation
@@ -52,7 +52,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: `Failed to reach Make.com: ${String(e)}` }, { status: 502 });
   }
 
-  // Step 2: list hooks — with or without teamId filter
+  // Step 2: list hooks  with or without teamId filter
   try {
     const hooksUrl = teamId
       ? `${zone}/api/v2/hooks?teamId=${teamId}&pg[limit]=100`

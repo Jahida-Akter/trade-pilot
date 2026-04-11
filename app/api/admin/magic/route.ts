@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
-  // Valid — set session cookie and redirect
+  // Valid  set session cookie and redirect
   const redirectTo = searchParams.get("next") || "/admin/leads";
   // Guard against open redirect: only allow relative paths starting with /admin
   const safePath = redirectTo.startsWith("/admin") ? redirectTo : "/admin/leads";

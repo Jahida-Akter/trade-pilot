@@ -1,5 +1,5 @@
 /**
- * /platform — Clean isolated page for bots and crawlers.
+ * /platform  Clean isolated page for bots and crawlers.
  *
  * Rules:
  *  - NO imports from anywhere in the funnel (components/, lib/, app/)
@@ -12,28 +12,28 @@ import type { Metadata } from "next";
 import BotTracker from "./BotTracker";
 
 export const dynamic = "force-static";
-// BotTracker is a client component but uses no dynamic server data —
+// BotTracker is a client component but uses no dynamic server data 
 // the page itself stays statically pre-rendered; only the tracker runs client-side.
 
 export const metadata: Metadata = {
-  title: "TradePilot — Algorithmic Trading Platform",
+  title: "TradePilot  Algorithmic Trading Platform",
   description:
     "TradePilot provides algorithmic trading signals and automation tools for active traders. Explore the market with practical automation and risk-aware trade execution.",
   openGraph: {
     type: "website",
-    title: "TradePilot — Algorithmic Trading Platform",
+    title: "TradePilot  Algorithmic Trading Platform",
     description:
       "Algorithmic trading signals and automation tools for active traders. Explore practical market intelligence with TradePilot.",
     siteName: "TradePilot",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TradePilot — Algorithmic Trading Platform",
+    title: "TradePilot  Algorithmic Trading Platform",
     description:
       "Algorithmic trading signals and automation tools for active traders.",
   },
   robots: {
-    index: true,      // deliberately indexable — gives crawlers a valid page
+    index: true,      // deliberately indexable  gives crawlers a valid page
     follow: false,
   },
 };
@@ -162,7 +162,7 @@ export default function PlatformPage() {
           {/* ── Features ── */}
           <section id="features" style={{ paddingBottom: 64 }}>
             <h2 style={{ fontSize: 30, fontWeight: 800, textAlign: "center", marginBottom: 8 }}>Platform Features</h2>
-            <p style={{ textAlign: "center", color: "#64748b", marginBottom: 40 }}>Everything you need to trade algorithmically — without the learning curve.</p>
+            <p style={{ textAlign: "center", color: "#64748b", marginBottom: 40 }}>Everything you need to trade algorithmically  without the learning curve.</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
               {FEATURES.map((f) => (
                 <div

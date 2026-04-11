@@ -62,7 +62,7 @@ export async function GET(req: Request) {
 
     prisma.visitor.count({ where: { convertedAt: { not: null } } }),
 
-    // all countries — real visitors only
+    // all countries  real visitors only
     prisma.visitor.groupBy({
       by: ["country"],
       _count: { id: true },
@@ -102,25 +102,25 @@ export async function GET(req: Request) {
       },
     }),
 
-    // hourly (last 24 h) — real only
+    // hourly (last 24 h)  real only
     prisma.visitor.findMany({
       where: { createdAt: { gte: oneDayAgo }, isBot: false },
       select: { createdAt: true },
     }),
 
-    // daily (last 30 days) — real only
+    // daily (last 30 days)  real only
     prisma.visitor.findMany({
       where: { createdAt: { gte: thirtyDayAgo }, isBot: false },
       select: { createdAt: true },
     }),
 
-    // weekly (last ~13 weeks) — real only
+    // weekly (last ~13 weeks)  real only
     prisma.visitor.findMany({
       where: { createdAt: { gte: ninetyDayAgo }, isBot: false },
       select: { createdAt: true },
     }),
 
-    // monthly (last 12 months) — real only
+    // monthly (last 12 months)  real only
     prisma.visitor.findMany({
       where: { createdAt: { gte: oneYearAgo }, isBot: false },
       select: { createdAt: true },

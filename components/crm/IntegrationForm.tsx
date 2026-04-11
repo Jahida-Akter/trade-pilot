@@ -61,7 +61,7 @@ const PLATFORMS = [
   { value: "email_resend", label: "Email Notification (Resend)" },
 ];
 
-// Google Sheets Apps Script — default field mapping
+// Google Sheets Apps Script  default field mapping
 const GSHEETS_FIELD_MAPPING = JSON.stringify(
   {
     created_at: "{{createdAt}}",
@@ -123,7 +123,7 @@ const DEFAULT_FIELD_MAPPING = JSON.stringify(
   2
 );
 
-/** Platforms that send via their own protocol — hide generic HTTP fields */
+/** Platforms that send via their own protocol  hide generic HTTP fields */
 const NOTIFICATION_PLATFORMS = ["telegram", "slack", "email_resend"];
 
 export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
@@ -177,7 +177,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
   const [testing, setTesting] = useState(false);
   const [activeTab, setActiveTab] = useState<"outbound" | "inbound" | "advanced">("outbound");
 
-  // Make.com API connector state (not saved to DB — used only to fetch hooks)
+  // Make.com API connector state (not saved to DB  used only to fetch hooks)
   const [makeToken, setMakeToken] = useState("");
   const [makeZone, setMakeZone] = useState("https://eu1.make.com");
   const [makeHooks, setMakeHooks] = useState<MakeHook[]>([]);
@@ -394,7 +394,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
 }`}
               </div>
               <p className="text-xs" style={{ color: "#15803d" }}>
-                ⚠ After re-deploying, always use <strong>Manage deployments → Edit</strong> and select <strong>New version</strong> — otherwise the URL changes.
+                ⚠ After re-deploying, always use <strong>Manage deployments → Edit</strong> and select <strong>New version</strong>  otherwise the URL changes.
               </p>
             </div>
           )}
@@ -415,13 +415,13 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
                   <li>1. Go to <strong>Make.com → Scenarios → Create a new scenario</strong></li>
                   <li>2. Add a <strong>Webhooks › Custom webhook</strong> module as the trigger</li>
                   <li>3. Click <strong>Add</strong>, name it, then copy the generated <code style={{fontFamily:"monospace"}}>https://hook.eu1.make.com/xxxx</code> URL</li>
-                  <li>4. Paste it into <strong>Endpoint URL</strong> below — or use the connector to pick it automatically</li>
+                  <li>4. Paste it into <strong>Endpoint URL</strong> below  or use the connector to pick it automatically</li>
                   <li>5. Method: <strong>POST</strong> · Auth: <strong>No Auth</strong> (the URL is the secret)</li>
                   <li>6. Hit <strong>Send Test Payload</strong> to verify. Make.com responds with <code style={{fontFamily:"monospace"}}>{`{"accepted":true}`}</code></li>
                 </ol>
               </div>
 
-              {/* Make.com API connector — fetch hooks automatically */}
+              {/* Make.com API connector  fetch hooks automatically */}
               <div
                 className="rounded-xl p-4 space-y-3"
                 style={{ background: "#f0fdf4", border: "1px solid #86efac" }}
@@ -431,7 +431,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
                 </p>
                 <p className="text-xs" style={{ color: "#15803d" }}>
                   Enter your Make.com API token to pick a webhook URL from your account directly.
-                  Your token is <strong>never stored</strong> — it is used only for this one-time fetch.
+                  Your token is <strong>never stored</strong>  it is used only for this one-time fetch.
                   Get it at: <strong>Make.com → Profile → API keys</strong>
                 </p>
                 <div className="grid gap-2 md:grid-cols-3">
@@ -578,12 +578,12 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
           {form.platform === "email_resend" && (
             <div className="space-y-4">
               <div className="rounded-xl p-4 space-y-2" style={{ background: "#fff7ed", border: "1px solid #fdba74" }}>
-                <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#c2410c" }}>Email via Resend — Setup Guide</p>
+                <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#c2410c" }}>Email via Resend  Setup Guide</p>
                 <ol className="text-xs space-y-1.5" style={{ color: "#7c2d12" }}>
                   <li>1. Sign up free at <strong>resend.com</strong> (3,000 emails/month free)</li>
                   <li>2. Go to <strong>API Keys → Create API Key</strong> → copy the key (starts with <code>re_</code>)</li>
                   <li>3. Add &amp; verify your sending domain (or test with <code>onboarding@resend.dev</code>)</li>
-                  <li>4. Fill in the fields below — you&apos;ll receive an email on every new lead</li>
+                  <li>4. Fill in the fields below  you&apos;ll receive an email on every new lead</li>
                 </ol>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
@@ -618,7 +618,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
             </div>
           )}
 
-          {/* Generic HTTP config — hidden for notification-only platforms */}
+          {/* Generic HTTP config  hidden for notification-only platforms */}
           {!NOTIFICATION_PLATFORMS.includes(form.platform) && (<>
           <div className="grid gap-4 md:grid-cols-3">
             <Field label="HTTP Method">
@@ -821,7 +821,7 @@ export function IntegrationForm({ initial, isEdit }: IntegrationFormProps) {
                   style={{ background: "#ede9fe", border: "1px solid #c4b5fd" }}
                 >
                   <p className="text-xs font-semibold" style={{ color: "#6d28d9" }}>
-                    Webhook URL — paste this into Make.com or your CRM:
+                    Webhook URL  paste this into Make.com or your CRM:
                   </p>
                   <code
                     className="text-xs block break-all select-all cursor-text rounded px-2 py-1"

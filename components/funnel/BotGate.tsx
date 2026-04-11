@@ -114,7 +114,7 @@ export default function BotGate({ onPass }: Props) {
   const gatePassedRef = useRef(false);
 
   // ── Instant redirect for hard bot signals ──────────────────────────────
-  // NOTE: canvasPixelOk() is intentionally excluded here — Firefox "Resist
+  // NOTE: canvasPixelOk() is intentionally excluded here  Firefox "Resist
   // Fingerprinting" and Brave Ad Blocking return noise/zeros from getImageData()
   // as a privacy feature, which would incorrectly block real human visitors.
   // Canvas is still used as a soft score signal in the timer loop below.
@@ -148,7 +148,7 @@ export default function BotGate({ onPass }: Props) {
     return () => window.clearTimeout(id);
   }, [showGate]);
 
-  // ── Safe one-shot pass helper — geo-checks before revealing funnel ────
+  // ── Safe one-shot pass helper  geo-checks before revealing funnel ────
   const tryPass = useCallback(async () => {
     if (passCalledRef.current || blocked) return;
     // Geo restriction: checked server-side after human verification passes
@@ -161,13 +161,13 @@ export default function BotGate({ onPass }: Props) {
           return;
         }
       }
-    } catch { /* network error — fail open */ }
+    } catch { /* network error  fail open */ }
     passCalledRef.current = true;
     setPassed(true);
     onPass();
   }, [blocked, onPass]);
 
-  // ── Gate dismissal — counts as two confirmed human intent signals ─────
+  // ── Gate dismissal  counts as two confirmed human intent signals ─────
   const dismissGate = useCallback(() => {
     if (gatePassedRef.current || blocked) return;
     gatePassedRef.current = true;
@@ -231,7 +231,7 @@ export default function BotGate({ onPass }: Props) {
       const times = interactionTimesRef.current;
       const jitterOk = times.length < 2 || (times[1] - times[0]) >= 30;
 
-      // Canvas check is a soft signal only — privacy browsers (Firefox RFP,
+      // Canvas check is a soft signal only  privacy browsers (Firefox RFP,
       // Brave) intentionally poison canvas output, so failure here just
       // requires a slider rather than blocking the user entirely.
       const canvasOk = canvasPixelOk();
@@ -267,13 +267,13 @@ export default function BotGate({ onPass }: Props) {
   }, [sliderDone, blocked, tryPass]);
 
   if (blocked) {
-    // Already redirecting via window.location.replace — show nothing
+    // Already redirecting via window.location.replace  show nothing
     return null;
   }
 
   if (passed) return null;
 
-  // ── Layer 1: full-screen gate — must be tapped before funnel is visible ─
+  // ── Layer 1: full-screen gate  must be tapped before funnel is visible ─
   if (showGate) {
     return (
       <div

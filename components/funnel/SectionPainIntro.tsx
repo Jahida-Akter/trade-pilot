@@ -75,7 +75,7 @@ export default function SectionPainIntro({
       <div className="space-y-3">
         <h2 className="text-2xl font-extrabold text-gray-900 leading-tight">
           {t.s2b_headline}<br />
-          <span className="text-amber-500">{t.s2b_headline_em}</span> —<br />
+          <span className="text-amber-500">{t.s2b_headline_em}</span> <br />
           {t.s2b_headline_end}
         </h2>
         <p className="text-gray-500 text-sm leading-relaxed">
@@ -237,7 +237,7 @@ export default function SectionPainIntro({
       {/* Risk disclaimer */}
       <RiskDisclaimer />
 
-      {/* ── Sticky bottom CTA — appears after scrolling ──────────────────── */}
+      {/* ── Sticky bottom CTA  appears after scrolling ──────────────────── */}
       {showSticky && (
         <div
           className="fixed bottom-0 left-0 right-0 z-50"

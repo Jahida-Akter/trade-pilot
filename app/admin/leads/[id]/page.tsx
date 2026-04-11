@@ -119,7 +119,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <Field k="Email" v={lead.email} />
               <Field k="Phone" v={lead.phone} />
               <Field k="Country" v={lead.country} />
-              <Field k="Quality" v={`${lead.qualityTier} — score ${lead.qualityScore}`} />
+              <Field k="Quality" v={`${lead.qualityTier} score ${lead.qualityScore}`} />
               <Field k="Disposable email" v={lead.disposableEmail ? "Yes ⚠️" : "No"} />
               <Field k="Phone country OK" v={lead.phoneCountryOk ? "Yes" : "No ⚠️"} />
             </div>
@@ -212,7 +212,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                   </div>
                   <div className="mt-2 grid gap-1 text-xs text-gray-500 sm:grid-cols-3">
                     <span>{d.requestMethod} → {d.requestUrl.slice(0, 60)}</span>
-                    <span>HTTP {d.responseStatus ?? "—"} · {d.durationMs ?? "—"}ms</span>
+                    <span>HTTP {d.responseStatus ?? "-"} · {d.durationMs ?? "-"}ms</span>
                     <span>{fmtDate(d.createdAt)}</span>
                   </div>
                   {d.lastError && (
@@ -261,7 +261,7 @@ function Field({ k, v }: { k: string; v?: string | null }) {
   return (
     <div className="flex gap-2">
       <span className="text-gray-400 shrink-0 w-32">{k}:</span>
-      <span className="text-gray-900 font-medium break-all">{v || "—"}</span>
+      <span className="text-gray-900 font-medium break-all">{v || "-"}</span>
     </div>
   );
 }
