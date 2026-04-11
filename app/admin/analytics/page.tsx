@@ -585,7 +585,7 @@ export default function AnalyticsPage() {
       {/* ── Hourly chart + Funnel drop-off ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <div style={card}>
-          <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>Visitors by Hour (today)</h2>
+          <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>Visitors by Hour (today · UTC)</h2>
           <HourlyChart data={hourly} />
           <div className="flex justify-between mt-1" style={{ fontSize: 10, color: "#94a3b8" }}>
             <span>0:00</span>
@@ -603,22 +603,22 @@ export default function AnalyticsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}>
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>By Country</h2>
-          <BreakdownBar items={byCountry} total={meta.totalVisitors} />
+          <BreakdownBar items={byCountry} total={meta.realVisitors} />
         </div>
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>By Device</h2>
-          <BreakdownBar items={byDevice} total={meta.totalVisitors} />
+          <BreakdownBar items={byDevice} total={meta.realVisitors} />
         </div>
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>By Browser</h2>
-          <BreakdownBar items={byBrowser} total={meta.totalVisitors} />
+          <BreakdownBar items={byBrowser} total={meta.realVisitors} />
         </div>
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 12 }}>UTM Sources</h2>
           {bySource.length === 0 ? (
             <p style={{ fontSize: 12, color: "#94a3b8" }}>No UTM data yet</p>
           ) : (
-            <BreakdownBar items={bySource} total={meta.totalVisitors} />
+            <BreakdownBar items={bySource} total={meta.realVisitors} />
           )}
         </div>
       </div>
