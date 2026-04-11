@@ -62,11 +62,6 @@ const STEP_ORDER = [
   "S2D_PROOF", "S3_QUIZ", "S4_REVEAL", "S5_SCARCITY", "S6_LEAD", "DONE",
 ];
 
-function stepIndex(s: string) {
-  const i = STEP_ORDER.indexOf(s);
-  return i === -1 ? 0 : i;
-}
-
 function fmtTime(iso: string) {
   const d = new Date(iso);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -172,7 +167,7 @@ function PeriodChart({ data, color }: { data: PeriodPoint[]; color: string }) {
 /* ─── Hourly sparkline ───────────────────────────────────── */
 function HourlyChart({ data }: { data: number[] }) {
   const max = Math.max(...data, 1);
-  const now  = new Date().getHours();
+  const now  = new Date().getUTCHours(); // data is bucketed in UTC server-side
   return (
     <div className="flex items-end gap-0.5 h-16 w-full">
       {data.map((v, h) => {
@@ -238,14 +233,16 @@ function FunnelChart({ byStep }: { byStep: LabelCount[] }) {
 /* ─── Main page ──────────────────────────────────────────── */
 export default function AnalyticsPage() {
   const [data, setData]         = useState<StatsData | null>(null);
-  const [loading, setLoading]   = useState(true);
+  const [loading, setLoading]   = useState(true);   // true only on first load
+  const [refreshing, setRefreshing] = useState(false); // silent background refresh
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [err, setErr]           = useState<string | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [period, setPeriod]     = useState<"daily" | "weekly" | "monthly">("daily");
   const [showAllCountries, setShowAllCountries] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch("/api/analytics/stats", { credentials: "include" });
       if (res.status === 401) { setErr("Not authorised — please log in."); return; }
@@ -258,12 +255,13 @@ export default function AnalyticsPage() {
       setErr(String(e));
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
   useEffect(() => {
-    void load();
-    const id = setInterval(() => void load(), 30_000);
+    void load(false);
+    const id = setInterval(() => void load(true), 30_000);
     return () => clearInterval(id);
   }, [load]);
 
@@ -306,18 +304,19 @@ export default function AnalyticsPage() {
           </p>
         </div>
         <button
-          onClick={() => { setLoading(true); void load(); }}
+          onClick={() => { setRefreshing(true); void load(true); }}
+          disabled={refreshing}
           style={{
             background: "#f1f5f9",
             border: "1px solid #e2e8f0",
             borderRadius: 8,
             padding: "6px 14px",
             fontSize: 13,
-            color: "#475569",
-            cursor: "pointer",
+            color: refreshing ? "#94a3b8" : "#475569",
+            cursor: refreshing ? "default" : "pointer",
           }}
         >
-          Refresh now
+          {refreshing ? "Refreshing…" : "Refresh now"}
         </button>
       </div>
 
@@ -543,7 +542,7 @@ export default function AnalyticsPage() {
                 </thead>
                 <tbody>
                   {(showAllCountries ? byCountryAll : byCountryAll.slice(0, 10)).map((c, i) => {
-                    const pct = meta.totalVisitors > 0 ? ((c.count / meta.totalVisitors) * 100).toFixed(1) : "0.0";
+                    const pct = meta.realVisitors > 0 ? ((c.count / meta.realVisitors) * 100).toFixed(1) : "0.0";
                     return (
                       <tr key={c.label} style={{ borderBottom: "1px solid #f1f5f9", background: i % 2 === 0 ? "#fff" : "#fafafa" }}>
                         <td style={{ padding: "8px 16px", color: "#94a3b8", fontWeight: 700, width: 40 }}>{i + 1}</td>
