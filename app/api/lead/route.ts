@@ -125,6 +125,18 @@ function computeScore(input: { fullName: string; emailOk: boolean; phoneOk: bool
   return Math.max(0, Math.min(100, score));
 }
 
+function getRequestHost(req: Request): string | null {
+  const forwarded = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  if (forwarded) return forwarded;
+  const host = req.headers.get("host")?.trim();
+  if (host) return host;
+  try {
+    return new URL(req.url).host;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
   try {
     // ── Server-side bot UA rejection ────────────────────────────────────
@@ -165,6 +177,16 @@ export async function POST(req: Request) {
     const email = normalizeEmail(parsed.data.email);
     const phone = normalizePhone(parsed.data.phone);
     const country = (parsed.data.country || "CA").trim();
+    const requestHost = getRequestHost(req);
+    const referrer = req.headers.get("referer") || req.headers.get("referrer") || null;
+    let referrerHost: string | null = null;
+    if (referrer) {
+      try {
+        referrerHost = new URL(referrer).host;
+      } catch {
+        referrerHost = null;
+      }
+    }
 
     // session must exist - if not, create one on the fly (handles hard-refresh race)
     let sessionRecord = await prisma.funnelSession.findUnique({
@@ -219,6 +241,9 @@ export async function POST(req: Request) {
           emailOk,
           phoneOk,
           disposable,
+          requestHost,
+          referrer,
+          referrerHost,
           quizAnswers: parsed.data.quizAnswers ?? [],
         }),
       },
@@ -274,6 +299,8 @@ export async function POST(req: Request) {
               sub1: subId || null,
               ip: rl.ip,
               userAgent,
+              host: requestHost,
+              referrerHost,
             }),
           },
         });

@@ -8,6 +8,18 @@ type SP = {
   end?: string;
 };
 
+function hostFromEventPayload(payload?: string | null): string | null {
+  if (!payload) return null;
+  try {
+    const obj = JSON.parse(payload) as { host?: unknown; referrerHost?: unknown };
+    if (typeof obj.host === "string" && obj.host.trim()) return obj.host.trim();
+    if (typeof obj.referrerHost === "string" && obj.referrerHost.trim()) return obj.referrerHost.trim();
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function startOfToday() {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -92,7 +104,8 @@ export default async function AdminLeadsPage({
           select: {
             events: {
               where: { name: { in: ["continue_clicked", "click_attached"] } },
-              select: { name: true },
+              orderBy: { createdAt: "desc" },
+              select: { name: true, payload: true },
             },
           },
         },
@@ -156,6 +169,8 @@ export default async function AdminLeadsPage({
               const latestConversion = latestClick?.conversions?.[0];
               const didContinue = l.session?.events?.some((e) => e.name === "continue_clicked") ?? false;
               const didClickOut = l.session?.events?.some((e) => e.name === "click_attached") ?? false;
+              const clickEvt = l.session?.events?.find((e) => e.name === "click_attached");
+              const leadHost = hostFromEventPayload(clickEvt?.payload);
               const isConverted = !!latestConversion;
               const status = isConverted ? "converted" : didContinue ? "continued" : "lead_created";
 
@@ -172,6 +187,11 @@ export default async function AdminLeadsPage({
                     <div className="text-xs mt-0.5" style={{ color: "#9ca3af" }}>
                       click: {latestClick?.clickId?.slice(0, 10) || "-"}
                     </div>
+                    {leadHost ? (
+                      <div className="text-xs mt-0.5" style={{ color: "#9ca3af" }}>
+                        host: {leadHost}
+                      </div>
+                    ) : null}
                   </td>
                   <td className="px-4 py-3.5">
                     <div style={{ color: "#111827" }}>{l.email || "-"}</div>

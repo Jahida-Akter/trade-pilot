@@ -2,7 +2,20 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimit } from "@/lib/rateLimit";
 
+function getRequestHost(req: Request): string | null {
+  const forwarded = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  if (forwarded) return forwarded;
+  const host = req.headers.get("host")?.trim();
+  if (host) return host;
+  try {
+    return new URL(req.url).host;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
+  const requestHost = getRequestHost(req);
   const rl = await rateLimit({ req, route: "/api/click", limit: 60, windowSec: 60 });
   if (!rl.ok) return NextResponse.json({ ok: false, code: "RATE_LIMIT" }, { status: 429 });
 
@@ -47,7 +60,7 @@ export async function POST(req: Request) {
     data: {
       sessionId: lead.sessionId,
       name: "click_attached",
-      payload: JSON.stringify({ leadId, clickId, offerKey: data.offerKey }),
+      payload: JSON.stringify({ leadId, clickId, offerKey: data.offerKey, host: requestHost }),
     },
   });
 

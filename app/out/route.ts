@@ -15,6 +15,7 @@ export async function GET(req: Request) {
 
   const offerKey = url.searchParams.get("offer"); // optional label for analytics
   const target = url.searchParams.get("to");
+  const requestHost = url.host || null;
 
   const MIN_SCORE_FOR_OUT = 60;
 
@@ -119,6 +120,7 @@ export async function GET(req: Request) {
           sub3,
           sub4,
           offerKey: offerKey || null,
+          host: requestHost,
         }),
       },
     });

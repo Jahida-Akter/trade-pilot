@@ -61,6 +61,14 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const latestConversion = latestClick?.conversions?.[0];
   const postbackMeta = safeParse(latestConversion?.raw);
   const sess = lead.session;
+  const latestClickEvent = [...(sess?.events ?? [])].reverse().find((e: { name: string }) => e.name === "click_attached");
+  const clickPayload = safeParse(latestClickEvent?.payload) ?? {};
+  const leadHostRaw =
+    (typeof clickPayload.host === "string" && clickPayload.host) ||
+    (typeof clickPayload.referrerHost === "string" && clickPayload.referrerHost) ||
+    (typeof meta.requestHost === "string" && meta.requestHost) ||
+    null;
+  const leadHost = leadHostRaw ? String(leadHostRaw).replace(/^https?:\/\//, "") : null;
 
   // Funnel answer rows
   const funnelAnswers = [
@@ -133,6 +141,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <Field k="Sub2"     v={latestClick?.sub2} />
               <Field k="Sub3"     v={latestClick?.sub3} />
               <Field k="Sub4"     v={latestClick?.sub4} />
+              <Field k="Host"     v={leadHost} />
               <Field k="Offer"    v={latestClick?.offerKey} />
             </div>
           </div>
