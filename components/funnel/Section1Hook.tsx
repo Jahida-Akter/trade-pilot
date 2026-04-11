@@ -301,7 +301,7 @@ export default function Section1Hook({ onContinue }: Props) {
               className="mt-1 w-full rounded-xl px-4 py-3 text-sm font-bold text-black transition-all duration-150 active:scale-[0.98]"
               style={{ background: "linear-gradient(135deg,#f0a500,#d4840a)", boxShadow: "0 2px 14px rgba(240,165,0,0.35)" }}
             >
-              See Trading Pilot in action →
+              {t.s1_mind_cta_nothing}
             </button>
           </div>
         ) : (
@@ -320,7 +320,7 @@ export default function Section1Hook({ onContinue }: Props) {
               className="mt-1 w-full rounded-xl px-4 py-3 text-sm font-bold text-black transition-all duration-150 active:scale-[0.98]"
               style={{ background: "linear-gradient(135deg,#f0a500,#d4840a)", boxShadow: "0 2px 14px rgba(240,165,0,0.35)" }}
             >
-              Take me to the live demo →
+              {t.s1_mind_cta_works}
             </button>
           </div>
         )}
@@ -361,7 +361,7 @@ export default function Section1Hook({ onContinue }: Props) {
               <p className="text-xs font-semibold text-gray-700">
                 {ACTIVITY_FEED[feedIdx].name}{" "}
                 <span className="font-normal text-gray-400">
-                  from {ACTIVITY_FEED[feedIdx].location}
+                  {t.s1_activity_from} {ACTIVITY_FEED[feedIdx].location}
                 </span>
               </p>
               <p className="text-xs text-gray-400">{ACTIVITY_FEED[feedIdx].pair} · {ACTIVITY_FEED[feedIdx].ago}</p>

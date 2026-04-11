@@ -106,7 +106,7 @@ export default function SocialProofTicker() {
   return (
     <div
       className={`
-        fixed bottom-5 left-4 z-50 flex max-w-xs items-center gap-3
+        fixed bottom-24 md:bottom-5 left-4 z-50 flex max-w-xs items-center gap-3
         rounded-xl px-4 py-3 backdrop-blur-md
         transition-all duration-500
         ${visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0 pointer-events-none"}

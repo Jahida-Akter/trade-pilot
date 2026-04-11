@@ -73,10 +73,13 @@ export type T = {
   s1_mind_nothing_title: string;
   s1_mind_nothing_body: string;
   s1_mind_nothing_footer: string;
+  s1_mind_cta_nothing: string;
   s1_mind_works_title: string;
   s1_mind_works_body: string;
+  s1_mind_cta_works: string;
   s1_activity_title: string;
   s1_activity_verified: string;
+  s1_activity_from: string;
   s1_trust_t1: string; s1_trust_t2: string;
   s1_trust_c1: string; s1_trust_c2: string;
   s1_trust_f1: string; s1_trust_f2: string;
@@ -393,10 +396,13 @@ const en: T = {
   s1_mind_nothing_title: "The market never sleeps. Trading Pilot doesn't either.",
   s1_mind_nothing_body: "While you sleep, Trading Pilot scans every price tick across 20+ instruments, fires precise entry signals, and manages open positions 24/7, with no emotion, no hesitation, and sub-millisecond execution. That's the edge people are using right now.",
   s1_mind_nothing_footer: "That's exactly what we're going to show you in under 60 seconds.",
+  s1_mind_cta_nothing: "See Trading Pilot in action →",
   s1_mind_works_title: "Trading Pilot gives that edge a Claude AI brain.",
   s1_mind_works_body: "Every signal Trading Pilot fires is cross-checked against live market news via Claude AI sentiment analysis before a single trade is placed. A perfect technical setup against negative headlines? Pilot waits. Confirmed signal with bullish sentiment? Pilot acts with full conviction.",
+  s1_mind_cta_works: "Take me to the live demo →",
   s1_activity_title: "Live withdrawals",
   s1_activity_verified: "verified · real accounts",
+  s1_activity_from: "from",
   s1_trust_t1: "4", s1_trust_t2: "AI strategies",
   s1_trust_c1: "24/7", s1_trust_c2: "Autonomous ops",
   s1_trust_f1: "< 1ms", s1_trust_f2: "Signal latency",
@@ -757,10 +763,13 @@ const it: T = {
   s1_mind_nothing_title: "Il mercato non dorme mai. Trading Pilot neanche.",
   s1_mind_nothing_body: "Mentre dormi, Trading Pilot scansiona ogni tick di prezzo su 20+ strumenti, genera segnali di ingresso precisi e gestisce le posizioni aperte 24/7  senza emozioni, senza esitazione, con esecuzione sub-millisecondo. Questo è il vantaggio che le persone stanno usando adesso.",
   s1_mind_nothing_footer: "È esattamente quello che ti mostreremo in meno di 60 secondi.",
+  s1_mind_cta_nothing: "Vedi Trading Pilot in azione →",
   s1_mind_works_title: "Trading Pilot dà a quel vantaggio un cervello Claude AI.",
   s1_mind_works_body: "Ogni segnale che Trading Pilot emette viene verificato rispetto alle notizie di mercato live tramite l'analisi del sentiment di Claude AI prima che venga effettuato un singolo trade. Un setup tecnico perfetto contro titoli negativi? Pilot aspetta. Segnale confermato con sentiment rialzista? Pilot agisce con piena convinzione.",
+  s1_mind_cta_works: "Portami alla demo live →",
   s1_activity_title: "Prelievi in diretta",
   s1_activity_verified: "verificato · account reali",
+  s1_activity_from: "da",
   s1_trust_t1: "4", s1_trust_t2: "Strategie AI",
   s1_trust_c1: "24/7", s1_trust_c2: "Operativo autonomo",
   s1_trust_f1: "< 1ms", s1_trust_f2: "Latenza segnale",
@@ -1115,10 +1124,13 @@ const de: T = {
   s1_mind_nothing_title: "Der Markt schläft nie. Trading Pilot auch nicht.",
   s1_mind_nothing_body: "Während du schläfst, scannt Trading Pilot jeden Preistick über 20+ Instrumente, sendet präzise Einstiegssignale und verwaltet offene Positionen 24/7  ohne Emotionen, ohne Zögern und mit Sub-Millisekunden-Ausführung. Das ist der Vorteil, den Menschen gerade nutzen.",
   s1_mind_nothing_footer: "Genau das werden wir dir in unter 60 Sekunden zeigen.",
+  s1_mind_cta_nothing: "Trading Pilot in Aktion sehen →",
   s1_mind_works_title: "Trading Pilot gibt diesem Vorteil ein Claude AI Gehirn.",
   s1_mind_works_body: "Jedes Signal, das Trading Pilot auslöst, wird mit Live-Marktnachrichten über Claude AI Sentiment-Analyse gegengeprüft, bevor ein einziger Trade gesetzt wird. Ein perfektes technisches Setup bei negativen Nachrichten? Pilot wartet. Bestätigtes Signal mit bullishem Sentiment? Pilot handelt mit voller Überzeugung.",
+  s1_mind_cta_works: "Zur Live-Demo →",
   s1_activity_title: "Live-Auszahlungen",
   s1_activity_verified: "verifiziert · echte Konten",
+  s1_activity_from: "aus",
   s1_trust_t1: "4", s1_trust_t2: "KI-Strategien",
   s1_trust_c1: "24/7", s1_trust_c2: "Autonome Ops",
   s1_trust_f1: "< 1ms", s1_trust_f2: "Signal-Latenz",
@@ -1473,10 +1485,13 @@ const fr: T = {
   s1_mind_nothing_title: "C'est le fossé. Et il est comblable.",
   s1_mind_nothing_body: "Un compte épargne te rapporte ~0,5 % par an. Le marché bouge autant en quelques minutes. Les gens qui gagnent de l'argent ne sont pas plus intelligents ils ont juste appris à être du bon côté de ces mouvements.",
   s1_mind_nothing_footer: "C'est exactement ce que nous allons te montrer.",
+  s1_mind_cta_nothing: "Voir Trading Pilot en action →",
   s1_mind_works_title: "Alors tu sais déjà pourquoi tu es là.",
   s1_mind_works_body: "Tu comprends le principe. Ce que nous te montrerons, c'est la façon la plus rapide et la moins risquée de l'appliquer sans expérience, sans diplôme de finance, sans passer des heures devant des graphiques.",
+  s1_mind_cta_works: "Aller à la démo en direct →",
   s1_activity_title: "Retraits en direct",
   s1_activity_verified: "vérifié · comptes réels",
+  s1_activity_from: "de",
   s1_trust_t1: "47 000+", s1_trust_t2: "Traders inscrits",
   s1_trust_c1: "Disponible dans", s1_trust_c2: "ton pays",
   s1_trust_f1: "Gratuit", s1_trust_f2: "Pour s'inscrire",
@@ -1831,10 +1846,13 @@ const es: T = {
   s1_mind_nothing_title: "Esa es la brecha. Y se puede cerrar.",
   s1_mind_nothing_body: "Una cuenta de ahorro te da ~0,5% al año. El mercado se mueve esa cantidad en minutos. Las personas que ganan dinero no son más inteligentes simplemente aprendieron a estar en el lado correcto de esos movimientos.",
   s1_mind_nothing_footer: "Eso es exactamente lo que te vamos a mostrar.",
+  s1_mind_cta_nothing: "Ver Trading Pilot en acción →",
   s1_mind_works_title: "Entonces ya sabes por qué estás aquí.",
   s1_mind_works_body: "Entiendes el principio. Lo que te mostraremos es la forma más rápida y con menos riesgo de aplicarlo sin experiencia, sin título de finanzas, sin pasar horas delante de gráficos.",
+  s1_mind_cta_works: "Llévame a la demo en vivo →",
   s1_activity_title: "Retiros en directo",
   s1_activity_verified: "verificado · cuentas reales",
+  s1_activity_from: "de",
   s1_trust_t1: "47.000+", s1_trust_t2: "Traders dentro",
   s1_trust_c1: "Disponible en", s1_trust_c2: "tu país",
   s1_trust_f1: "Gratis", s1_trust_f2: "Para unirse",
