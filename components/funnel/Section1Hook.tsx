@@ -130,7 +130,23 @@ export default function Section1Hook({ onContinue }: Props) {
           {t.s1_subtext}
         </p>
       </div>
-
+      {/* ── 3 Quick Advantages ───────────────────────────────────── */}
+      <div className="animate-fade-in-up delay-120 grid grid-cols-3 gap-2 text-center">
+        {[
+          { icon: "⚡", text: t.s1_adv1 },
+          { icon: "🖥️", text: t.s1_adv2 },
+          { icon: "💸", text: t.s1_adv3 },
+        ].map((item) => (
+          <div
+            key={item.text}
+            className="rounded-xl border py-2.5 px-1.5"
+            style={{ background: "rgba(240,165,0,0.04)", borderColor: "rgba(240,165,0,0.20)" }}
+          >
+            <p className="text-base mb-0.5">{item.icon}</p>
+            <p className="text-[10px] font-semibold text-gray-600 leading-snug">{item.text}</p>
+          </div>
+        ))}
+      </div>
       {/* ── Above-fold CTA ───────────────────────────────────────────────── */}
       <button
         onClick={onContinue}

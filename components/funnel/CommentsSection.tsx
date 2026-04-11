@@ -37,11 +37,12 @@ function avatarColor(name: string) {
 
 const SEED_COMMENTS: Comment[] = [
   {
-    id: "c1", author: "James H.", avatar: "", photoUrl: "https://randomuser.me/api/portraits/men/52.jpg", location: "🇬🇧 UK",
-    text: "Just registered  finally took the step after seeing this for the third time in my feed. Nervous but excited.",
-    minutesAgo: 2, likes: 14,
+    id: "c1", author: "Jasper L.", avatar: "", photoUrl: "https://randomuser.me/api/portraits/men/41.jpg", location: "🇬🇧 UK",
+    text: "I'll be honest  I've been burned by trading software promises twice before. What actually makes this different? How do I know it's not just another bot that loses money the moment you go live?",
+    minutesAgo: 3, likes: 47,
     replies: [
-      { id: "r1a", author: "Support Team", avatar: "", text: "Welcome James! Your specialist will be in touch within a few hours. You're going to love the onboarding.", minutesAgo: 2, likes: 4 },
+      { id: "r1a", author: "Support Team", avatar: "", text: "Totally fair question Jasper. The key difference is the AI sentiment filter  before every trade, Pilot checks live news headlines for that asset. Other bots fire on any signal. Ours waits if the macro picture looks bad. That's what stops the big drawdowns. Happy to walk you through it on your onboarding call.", minutesAgo: 3, likes: 31 },
+      { id: "r1b", author: "Jasper L.", avatar: "", photoUrl: "https://randomuser.me/api/portraits/men/41.jpg", text: "Ok that actually makes sense. Just signed up. Let's see how it goes 🤞", minutesAgo: 2, likes: 19 },
     ],
   },
   {

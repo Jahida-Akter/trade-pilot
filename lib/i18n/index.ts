@@ -316,6 +316,13 @@ export type T = {
   s2d_running_note: string;
   s2d_cta: string;
   s2d_watch_again: string;
+  // S1 – 3 quick advantages strip
+  s1_adv1: string; s1_adv2: string; s1_adv3: string;
+  // S5 – direct/waitlist bypass note
+  s5_direct_note: string;
+  // S2D – withdrawal log panel
+  s2d_withdrawal_title: string;
+  s2d_withdrawal_verified: string;
 };
 
 // ── ENGLISH ───────────────────────────────────────────────────────────────────
@@ -640,6 +647,12 @@ const en: T = {
   s2d_running_note: "Simulation running — watch the chart above...",
   s2d_cta: "I want this running on my account →",
   s2d_watch_again: "↺ Watch again",
+  s1_adv1: "Minimal manual work",
+  s1_adv2: "No experience needed",
+  s1_adv3: "Withdraw in 24–48h",
+  s5_direct_note: "You're accessing via a direct registration link — this bypasses the public waitlist and reserves your spot immediately. Once you leave this page, this spot cannot be guaranteed.",
+  s2d_withdrawal_title: "Recent withdrawals from your region",
+  s2d_withdrawal_verified: "verified · real accounts",
 };
 
 // ── ITALIAN ───────────────────────────────────────────────────────────────────
@@ -958,6 +971,12 @@ const it: T = {
   s2d_running_note: "Simulazione in corso — guarda il grafico sopra...",
   s2d_cta: "Voglio questo attivo sul mio conto →",
   s2d_watch_again: "↺ Guarda di nuovo",
+  s1_adv1: "Intervento manuale minimo",
+  s1_adv2: "Nessuna esperienza richiesta",
+  s1_adv3: "Prelievo in 24–48h",
+  s5_direct_note: "Stai accedendo tramite un link di registrazione diretto — questo bypassa la lista d'attesa pubblica e riserva il tuo posto immediatamente. Una volta che lasci questa pagina, questo posto non può essere garantito.",
+  s2d_withdrawal_title: "Prelievi recenti dalla tua regione",
+  s2d_withdrawal_verified: "verificato · account reali",
 };
 
 // ── GERMAN ────────────────────────────────────────────────────────────────────
@@ -1276,6 +1295,12 @@ const de: T = {
   s2d_running_note: "Simulation läuft — beobachte den Chart oben...",
   s2d_cta: "Ich will das auf meinem Konto laufen haben →",
   s2d_watch_again: "↺ Nochmal ansehen",
+  s1_adv1: "Minimaler manueller Aufwand",
+  s1_adv2: "Keine Erfahrung nötig",
+  s1_adv3: "Auszahlung in 24–48h",
+  s5_direct_note: "Du nutzt einen direkten Registrierungslink — dieser umgeht die öffentliche Warteliste und reserviert deinen Platz sofort. Sobald du diese Seite verlässt, kann dieser Platz nicht garantiert werden.",
+  s2d_withdrawal_title: "Aktuelle Auszahlungen aus deiner Region",
+  s2d_withdrawal_verified: "verifiziert · echte Konten",
 };
 
 // ── FRENCH ────────────────────────────────────────────────────────────────────
@@ -1594,6 +1619,12 @@ const fr: T = {
   s2d_running_note: "Simulation en cours — regarde le graphique ci-dessus...",
   s2d_cta: "Je veux ça sur mon compte →",
   s2d_watch_again: "↺ Regarder à nouveau",
+  s1_adv1: "Travail manuel minimal",
+  s1_adv2: "Aucune expérience requise",
+  s1_adv3: "Retrait sous 24–48h",
+  s5_direct_note: "Tu accèdes via un lien d'inscription direct — il contourne la liste d'attente publique et réserve ta place immédiatement. Une fois que tu quittes cette page, cette place ne peut être garantie.",
+  s2d_withdrawal_title: "Retraits récents dans ta région",
+  s2d_withdrawal_verified: "vérifié · comptes réels",
 };
 
 // ── SPANISH ───────────────────────────────────────────────────────────────────
@@ -1912,6 +1943,12 @@ const es: T = {
   s2d_running_note: "Simulación en curso — mira el gráfico de arriba...",
   s2d_cta: "Quiero esto funcionando en mi cuenta →",
   s2d_watch_again: "↺ Ver de nuevo",
+  s1_adv1: "Trabajo manual mínimo",
+  s1_adv2: "Sin experiencia necesaria",
+  s1_adv3: "Retira en 24–48h",
+  s5_direct_note: "Estás accediendo a través de un enlace de registro directo — esto evita la lista de espera pública y reserva tu lugar inmediatamente. Una vez que abandones esta página, este lugar no puede garantizarse.",
+  s2d_withdrawal_title: "Retiros recientes en tu región",
+  s2d_withdrawal_verified: "verificado · cuentas reales",
 };
 
 // ── Export ────────────────────────────────────────────────────────────────────

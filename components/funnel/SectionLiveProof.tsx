@@ -689,6 +689,33 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         </div>
       )}
 
+      {/* ── Bank withdrawal log ──────────────────────────────────────────── */}
+      {phase === "done" && (
+        <div className="rounded-2xl bg-gray-900 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+            <span className="text-xs font-semibold text-gray-300">{t.s2d_withdrawal_title}</span>
+            <span className="flex items-center gap-1.5 text-xs text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {t.s2d_withdrawal_verified}
+            </span>
+          </div>
+          {[
+            { date: "Today, 09:14", name: "M. Torres", amount: "£1,247.00" },
+            { date: "Today, 07:52", name: "K. Adeyemi", amount: "£892.50" },
+            { date: "Yesterday", name: "S. Brennan", amount: "£2,104.00" },
+            { date: "Yesterday", name: "L. Fernandez", amount: "£634.75" },
+          ].map((row) => (
+            <div key={row.name} className="flex items-center justify-between px-4 py-3 border-b border-gray-800/60 last:border-0">
+              <div>
+                <p className="text-xs font-semibold text-gray-200">{row.name}</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">{row.date}</p>
+              </div>
+              <span className="text-sm font-black text-emerald-400">+{row.amount}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* CTAs */}
       {phase === "idle" && (
         <button

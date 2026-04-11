@@ -66,6 +66,18 @@ export default function Section5Scarcity({ onContinue }: Props) {
   return (
     <div className="space-y-6">
 
+      {/* ── Direct link / waitlist bypass notice ─────────────────────────── */}
+      <div
+        className="rounded-xl px-4 py-3 flex items-start gap-3"
+        style={{ background: "rgba(240,165,0,0.07)", border: "1px solid rgba(240,165,0,0.22)" }}
+      >
+        <span className="text-base shrink-0 mt-0.5">🔗</span>
+        <p className="text-xs text-amber-900 leading-relaxed">
+          <span className="font-bold">Direct access: </span>
+          {t.s5_direct_note}
+        </p>
+      </div>
+
       {/* ── Hero urgency image ──────────────────────────────────────────── */}
       <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
