@@ -104,7 +104,7 @@ function DialDropdown({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 h-full bg-gray-100 border-r border-gray-200 px-3 py-3 text-sm text-gray-800 focus:outline-none cursor-pointer"
+        className="flex items-center gap-1.5 h-full bg-gray-100 border-r border-gray-200 px-3 py-3 text-sm text-gray-800 focus:outline-none cursor-pointer rounded-l-xl"
         style={{ minWidth: "92px" }}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -453,7 +453,7 @@ export default function Section6LeadCapture({ sessionId, clickId, subId, quizAns
           {/* Phone + country code */}
           <Field label={t.s6_phone_label} htmlFor="ag-phone" error={fieldErr.phone}>
             <div
-              className={`flex rounded-xl border overflow-hidden transition ${
+              className={`flex rounded-xl border transition ${
                 fieldErr.phone
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-amber-500"
@@ -467,7 +467,7 @@ export default function Section6LeadCapture({ sessionId, clickId, subId, quizAns
                 value={phoneLocal}
                 onChange={(e) => setPhoneLocal(e.target.value)}
                 placeholder="555 000 0000"
-                className="flex-1 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none"
+                className="flex-1 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none rounded-r-xl"
               />
             </div>
             <p className="mt-1 text-xs text-gray-400">
