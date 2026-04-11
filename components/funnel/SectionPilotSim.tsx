@@ -580,9 +580,11 @@ export default function SectionPilotSim({
         </button>
         <button
           onClick={onContinue}
-          className="w-full rounded-xl bg-gray-900 py-4 text-base font-bold text-white shadow-lg transition hover:bg-gray-800 active:scale-[.98]"
+          className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
+          style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
         >
           {t.s2c_cta}
+          <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
         </button>
         <p className="text-center text-xs text-gray-400">
           {t.s2c_cta_sub}

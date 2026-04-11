@@ -270,6 +270,12 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
     at(8000, () => setStatusText(t.s2d_status_pattern));
   }, [cleanup, animateBalance, addMilestone, at, t]);
 
+  // Auto-start simulation immediately on mount
+  useEffect(() => {
+    startSim();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Build SVG chart data
   const totalCandles = CANDLES.length;
   const visible = CANDLES.slice(0, visibleCount);
@@ -687,15 +693,25 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
       {phase === "idle" && (
         <button
           onClick={startSim}
-          className="w-full rounded-xl bg-gray-900 py-4 text-base font-bold text-white shadow-lg transition hover:bg-gray-800 active:scale-[.98]"
+          className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
+          style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
         >
           {t.s2d_start_btn}
+          <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
         </button>
       )}
 
       {phase === "running" && (
-        <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-center text-xs text-gray-500">
-          {t.s2d_running_note}
+        <div className="space-y-2">
+          <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-center text-xs text-gray-500">
+            {t.s2d_running_note}
+          </div>
+          <button
+            onClick={onContinue}
+            className="w-full rounded-xl border border-amber-300 bg-amber-50 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-100"
+          >
+            {t.s2d_cta} →
+          </button>
         </div>
       )}
 
@@ -703,9 +719,11 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         <div className="space-y-3">
           <button
             onClick={onContinue}
-            className="w-full rounded-xl bg-gray-900 py-4 text-base font-bold text-white shadow-lg transition hover:bg-gray-800 active:scale-[.98]"
+            className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
+            style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
           >
             {t.s2d_cta}
+            <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
           </button>
           <button
             onClick={() => {

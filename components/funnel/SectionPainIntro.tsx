@@ -99,6 +99,7 @@ export default function SectionPainIntro({
   ];
   const [revealed, setRevealed] = useState(false);
   const [counter, setCounter] = useState(0);
+  const [showSticky, setShowSticky] = useState(false);
 
   // Animate entry
   useEffect(() => {
@@ -106,13 +107,19 @@ export default function SectionPainIntro({
     return () => clearTimeout(t);
   }, []);
 
-  // Live "lost to inflation" counter
+  // Live bot profit counter
   useEffect(() => {
-    // £5,000 of value lost per second globally to inflation (illustrative)
     const interval = setInterval(() => {
       setCounter((c) => c + Math.floor(Math.random() * 120 + 80));
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Sticky CTA: show after scrolling past the intro
+  useEffect(() => {
+    const onScroll = () => setShowSticky(window.scrollY > 320);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -134,7 +141,7 @@ export default function SectionPainIntro({
       <div className="space-y-3">
         <h2 className="text-2xl font-extrabold text-gray-900 leading-tight">
           {t.s2b_headline}<br />
-          <span className="text-red-500">{t.s2b_headline_em}</span>,<br />
+          <span className="text-amber-500">{t.s2b_headline_em}</span> —<br />
           {t.s2b_headline_end}
         </h2>
         <p className="text-gray-500 text-sm leading-relaxed">
@@ -143,14 +150,14 @@ export default function SectionPainIntro({
       </div>
 
       {/* ── Live counter ── */}
-      <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-4">
-        <div className="text-xs text-red-400 uppercase tracking-widest font-semibold mb-1">
+      <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-4">
+        <div className="text-xs text-amber-600 uppercase tracking-widest font-semibold mb-1">
           {t.s2b_counter_label}
         </div>
-        <div className="text-3xl font-extrabold text-red-600 font-mono tabular-nums">
-          £{counter.toLocaleString()}
+        <div className="text-3xl font-extrabold text-amber-600 font-mono tabular-nums">
+          +${counter.toLocaleString()}
         </div>
-        <div className="text-xs text-red-400 mt-1">
+        <div className="text-xs text-amber-500 mt-1">
           {t.s2b_counter_sub}
         </div>
       </div>
@@ -282,9 +289,11 @@ export default function SectionPainIntro({
  </div>
  <button
  onClick={onContinue}
- className="w-full rounded-xl bg-gray-900 py-4 text-base font-bold text-white shadow-lg transition hover:bg-gray-800 active:scale-[.98]"
+ className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
+ style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
  >
           {t.s2b_cta}
+          <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
         </button>
  <p className="text-center text-xs text-gray-400">
           {t.s2b_cta_sub}
@@ -293,6 +302,31 @@ export default function SectionPainIntro({
 
       {/* Risk disclaimer */}
       <RiskDisclaimer />
+
+      {/* ── Sticky bottom CTA — appears after scrolling ──────────────────── */}
+      {showSticky && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50"
+          style={{
+            background: "linear-gradient(to top, rgba(255,255,255,0.97) 80%, transparent)",
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingBottom: "max(16px, env(safe-area-inset-bottom))",
+            paddingTop: 12,
+          }}
+        >
+          <div className="mx-auto max-w-xl">
+            <button
+              onClick={onContinue}
+              className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-extrabold text-black flex items-center justify-center gap-2"
+              style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
+            >
+              {t.s2b_cta}
+              <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
