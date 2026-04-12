@@ -189,7 +189,7 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         clearInterval(ticker);
         setPhase("done");
         setStatus("Session complete — 3 trades, 3 wins, $0 effort.");
-        later(3500, onContinue);
+        later(6000, onContinue);
       }
     }, TICK);
 
