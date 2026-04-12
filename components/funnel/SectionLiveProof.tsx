@@ -4,743 +4,454 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import RiskDisclaimer from "@/components/funnel/RiskDisclaimer";
 import { useT } from "@/components/LocaleProvider";
 
-// ── Scripted candle data: 60 candles ~ 1 minute of price action ──────────────
-// Each candle: [open, high, low, close]
-// Price goes sideways, dips, MA crossover fires, bot buys, price rallies, profit
-
-const RAW_CANDLES: [number, number, number, number][] = [
-  [100.00, 100.18, 99.82, 100.05],
-  [100.05, 100.22, 99.90, 99.98],
-  [99.98,  100.10, 99.75, 99.80],
-  [99.80,  99.92,  99.60, 99.72],
-  [99.72,  99.88,  99.55, 99.65],
-  [99.65,  99.80,  99.48, 99.58],
-  [99.58,  99.70,  99.40, 99.52],
-  [99.52,  99.65,  99.38, 99.60],
-  [99.60,  99.78,  99.45, 99.70],
-  [99.70,  99.85,  99.55, 99.62],
-  [99.62,  99.75,  99.50, 99.55],
-  [99.55,  99.68,  99.42, 99.68],
-  // Crossover fires here (candle 12) - bot buys
-  [99.68,  99.95,  99.62, 99.90],
-  [99.90,  100.15, 99.82, 100.10],
-  [100.10, 100.38, 99.98, 100.32],
-  [100.32, 100.55, 100.20,100.48],
-  [100.48, 100.72, 100.35,100.65],
-  [100.65, 100.90, 100.52,100.82],
-  [100.82, 101.05, 100.68,100.98],
-  [100.98, 101.22, 100.85,101.15],
-  [101.15, 101.35, 100.98,101.25],
-  [101.25, 101.48, 101.10,101.40],
-  [101.40, 101.60, 101.28,101.52],
-  [101.52, 101.72, 101.38,101.65],
-  // TP1 hit (candle 24) - $12.92 profit locked
-  [101.65, 101.80, 101.45,101.58],
-  [101.58, 101.72, 101.35,101.48],
-  [101.48, 101.62, 101.28,101.35],
-  [101.35, 101.50, 101.15,101.22],
-  [101.22, 101.38, 101.05,101.15],
-  [101.15, 101.30, 100.95,101.08],
-  // Second trade setup (candle 30)
-  [101.08, 101.25, 100.92,101.18],
-  [101.18, 101.38, 101.05,101.30],
-  [101.30, 101.52, 101.18,101.45],
-  [101.45, 101.65, 101.32,101.58],
-  [101.58, 101.80, 101.44,101.72],
-  // Second rally continues
-  [101.72, 101.95, 101.58,101.88],
-  [101.88, 102.10, 101.75,102.02],
-  [102.02, 102.25, 101.88,102.18],
-  [102.18, 102.40, 102.05,102.32],
-  [102.32, 102.55, 102.18,102.48],
-  // TP2 hit (candle 40) - +$5.41 more
-  [102.48, 102.65, 102.32,102.55],
-  [102.55, 102.72, 102.40,102.62],
-  [102.62, 102.80, 102.48,102.72],
-  [102.72, 102.88, 102.60,102.78],
-  [102.78, 102.95, 102.65,102.85],
-  [102.85, 103.00, 102.72,102.92],
-  [102.92, 103.08, 102.80,102.98],
-  [102.98, 103.12, 102.85,103.05],
-  [103.05, 103.18, 102.92,103.10],
-  [103.10, 103.22, 102.98,103.15],
-  [103.15, 103.28, 103.02,103.20],
-  [103.20, 103.32, 103.08,103.25],
-  [103.25, 103.38, 103.12,103.30],
-  [103.30, 103.42, 103.18,103.35],
-  [103.35, 103.48, 103.22,103.40],
-  [103.40, 103.52, 103.28,103.44],
-  [103.44, 103.56, 103.30,103.48],
-  [103.48, 103.60, 103.36,103.52],
-  [103.52, 103.64, 103.40,103.56],
+// ── Scripted EUR/USD candles (38 total) ───────────────────────────────────────
+// [open, high, low, close]
+const RAW: [number,number,number,number][] = [
+  [1.08500,1.08540,1.08470,1.08510],
+  [1.08510,1.08555,1.08490,1.08525],
+  [1.08525,1.08550,1.08490,1.08500],
+  [1.08500,1.08530,1.08475,1.08490],
+  [1.08490,1.08520,1.08460,1.08505],
+  [1.08505,1.08535,1.08480,1.08510],
+  [1.08510,1.08545,1.08490,1.08515],
+  [1.08515,1.08530,1.08485,1.08520],
+  // ── Trade 1 BUY entry 1.08520 (candle 8) ─────────────────────────────
+  [1.08520,1.08580,1.08510,1.08565],
+  [1.08565,1.08630,1.08550,1.08615],
+  [1.08615,1.08680,1.08600,1.08665],
+  [1.08665,1.08730,1.08650,1.08715],
+  [1.08715,1.08770,1.08700,1.08755],
+  [1.08755,1.08800,1.08740,1.08780],
+  // ── Trade 1 TP 1.08780 → +26 pips, +$6.50 (candle 14) ───────────────
+  [1.08780,1.08800,1.08750,1.08765],
+  [1.08765,1.08785,1.08740,1.08750],
+  [1.08750,1.08770,1.08725,1.08745],
+  [1.08745,1.08775,1.08730,1.08760],
+  [1.08760,1.08800,1.08750,1.08790],
+  [1.08790,1.08840,1.08775,1.08830],
+  // ── Trade 2 BUY entry 1.08800 (candle 20) ────────────────────────────
+  [1.08830,1.08900,1.08820,1.08880],
+  [1.08880,1.08950,1.08865,1.08935],
+  [1.08935,1.09010,1.08920,1.08990],
+  [1.08990,1.09060,1.08975,1.09045],
+  [1.09045,1.09110,1.09030,1.09095],
+  [1.09095,1.09140,1.09080,1.09125],
+  // ── Trade 2 TP 1.09120 → +32 pips, +$8.00 (candle 26) ───────────────
+  [1.09125,1.09145,1.09090,1.09105],
+  [1.09105,1.09120,1.09065,1.09075],
+  [1.09075,1.09095,1.09040,1.09060],
+  [1.09060,1.09080,1.09020,1.09040],
+  // ── Trade 3 SELL entry 1.09050 (candle 30) ───────────────────────────
+  [1.09040,1.09060,1.08995,1.09015],
+  [1.09015,1.09030,1.08970,1.08990],
+  [1.08990,1.09005,1.08945,1.08965],
+  [1.08965,1.08980,1.08920,1.08940],
+  [1.08940,1.08960,1.08895,1.08915],
+  [1.08915,1.08930,1.08865,1.08880],
+  // ── Trade 3 TP 1.08840 → +21 pips, +$5.25 (candle 37) ───────────────
+  [1.08880,1.08895,1.08825,1.08845],
 ];
 
-type Candle = { o: number; h: number; l: number; c: number };
-const CANDLES: Candle[] = RAW_CANDLES.map(([o, h, l, c]) => ({ o, h, l, c }));
+type C = { o:number; h:number; l:number; c:number };
+const CANDLES: C[] = RAW.map(([o,h,l,c]) => ({ o,h,l,c }));
 
-const BUY_CANDLE_IDX  = 12;  // green arrow appears here
-const TP1_CANDLE_IDX  = 24;  // first profit flash
-const BUY2_CANDLE_IDX = 30;  // second trade entry
-const TP2_CANDLE_IDX  = 40;  // second profit flash
+const T1_BUY  = 8;   const T1_ENTRY = 1.08520;
+const T1_TP   = 14;  const T1_PIPS  = 26; const T1_USD = 6.50;
+const T2_BUY  = 20;  const T2_ENTRY = 1.08800;
+const T2_TP   = 26;  const T2_PIPS  = 32; const T2_USD = 8.00;
+const T3_SELL = 30;  const T3_ENTRY = 1.09050;
+const T3_TP   = 37;  const T3_PIPS  = 21; const T3_USD = 5.25;
 
-const START_BAL = 250.0;
-const TP1_PROFIT = 12.92;
-const TP2_PROFIT = 5.41;
-const TOTAL_PROFIT = TP1_PROFIT + TP2_PROFIT; // $18.33
+const START_BAL   = 250.00;
+const TOTAL_USD   = T1_USD + T2_USD + T3_USD; // $19.75
 
-// SMA helper
-function sma(candles: Candle[], end: number, period: number): number | null {
-  if (end < period - 1) return null;
-  let sum = 0;
-  for (let i = end - period + 1; i <= end; i++) sum += candles[i].c;
-  return sum / period;
-}
-
-type Phase = "idle" | "running" | "done";
-
-// Milestone popup shown on screen
-type Milestone = {
-  id: number;
-  text: string;
-  sub: string;
-  color: string;
-};
+type Phase        = "idle" | "running" | "done";
+type TradeSignal  = "BUY" | "SELL";
+type ClosedTrade  = { n:number; signal:TradeSignal; pips:number; usd:number };
 
 export default function SectionLiveProof({ onContinue }: { onContinue: () => void }) {
-  const t = useT();
-  const [phase, setPhase]           = useState<Phase>("idle");
-  const [visibleCount, setVisible]  = useState(0);
-  const [balance, setBalance]       = useState(START_BAL);
-  const [profit, setProfit]         = useState(0);
-  const [flashProfit, setFlash]     = useState(false);
-  const [inTrade, setInTrade]       = useState(false);
-  const [entryPrice, setEntryPrice] = useState<number | null>(null);
-  const [unrealized, setUnrealized] = useState(0);
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [tradeCount, setTradeCount] = useState(0);
-  const [statusText, setStatusText] = useState(t.s2d_status_initial);
+  useT(); // locale hook kept for completeness; translations not needed here
+  const [phase,       setPhase]      = useState<Phase>("idle");
+  const [shown,       setShown]      = useState(0);
+  const [balance,     setBalance]    = useState(START_BAL);
+  const [livePrice,   setLivePrice]  = useState(CANDLES[0].c);
+  const [signal,      setSignal]     = useState<TradeSignal|null>(null);
+  const [entryPrice,  setEntryPrice] = useState<number|null>(null);
+  const [livePips,    setLivePips]   = useState(0);
+  const [inTrade,     setInTrade]    = useState(false);
+  const [closed,      setClosed]     = useState<ClosedTrade[]>([]);
+  const [flash,       setFlash]      = useState(false);
+  const [status,      setStatus]     = useState("Bot ready. Press Run Bot.");
 
-  const balRef       = useRef(START_BAL);
-  const profitRef    = useRef(0);
-  const milIdRef     = useRef(0);
-  const timerRefs    = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const intervalRefs = useRef<ReturnType<typeof setInterval>[]>([]);
+  const balRef    = useRef(START_BAL);
+  const timers    = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const intervals = useRef<ReturnType<typeof setInterval>[]>([]);
 
-  const cleanup = useCallback(() => {
-    timerRefs.current.forEach(clearTimeout);
-    intervalRefs.current.forEach(clearInterval);
-    timerRefs.current = [];
-    intervalRefs.current = [];
+  const clearAll = useCallback(() => {
+    timers.current.forEach(clearTimeout);
+    intervals.current.forEach(clearInterval);
+    timers.current = []; intervals.current = [];
   }, []);
 
-  useEffect(() => () => cleanup(), [cleanup]);
+  useEffect(() => () => clearAll(), [clearAll]);
 
-  const addMilestone = useCallback((text: string, sub: string, color: string) => {
-    const id = ++milIdRef.current;
-    setMilestones((prev) => [...prev.slice(-2), { id, text, sub, color }]);
-    setTimeout(() => {
-      setMilestones((prev) => prev.filter((m) => m.id !== id));
-    }, 3500);
+  const later = useCallback((ms:number, fn:()=>void) => {
+    timers.current.push(setTimeout(fn, ms));
   }, []);
 
-  const at = useCallback((ms: number, fn: () => void) => {
-    timerRefs.current.push(setTimeout(fn, ms));
-  }, []);
-
-  // Smooth balance counter animation
-  const animateBalance = useCallback((target: number, durationMs: number) => {
-    const start = balRef.current;
-    const startTime = performance.now();
-    const id = setInterval(() => {
-      const elapsed = performance.now() - startTime;
-      const frac = Math.min(elapsed / durationMs, 1);
-      const eased = 1 - Math.pow(1 - frac, 3); // ease-out cubic
-      const val = start + (target - start) * eased;
-      setBalance(val);
-      if (frac >= 1) {
-        clearInterval(id);
-        balRef.current = target;
-      }
-    }, 16);
-    intervalRefs.current.push(id);
-  }, []);
-
-  const startSim = useCallback(() => {
-    cleanup();
+  const startBot = useCallback(() => {
+    clearAll();
     setPhase("running");
-    setVisible(0);
+    setShown(0);
     setBalance(START_BAL);
-    setProfit(0);
-    setFlash(false);
-    setInTrade(false);
+    setLivePrice(CANDLES[0].c);
+    setSignal(null);
     setEntryPrice(null);
-    setUnrealized(0);
-    setMilestones([]);
-    setTradeCount(0);
-    setStatusText(t.s2d_status_initial);
+    setLivePips(0);
+    setInTrade(false);
+    setClosed([]);
+    setFlash(false);
+    setStatus("Scanning EUR/USD market…");
     balRef.current = START_BAL;
-    profitRef.current = 0;
 
-    // Candle ticker: one new candle every ~350ms = ~21s for 60 candles
-    const INTERVAL = 350;
-    let current = 0;
-    const entryPriceRef = { val: 0 };
-    const inTradeRef = { val: false };
+    const TICK = 380;
+    let idx = 0;
+    const entRef = { price: 0, sig: "BUY" as TradeSignal };
 
     const ticker = setInterval(() => {
-      current++;
-      setVisible(current);
+      idx++;
+      setShown(idx);
+      const candle = CANDLES[idx - 1];
+      if (!candle) { clearInterval(ticker); return; }
+      setLivePrice(candle.c);
 
-      const c = CANDLES[current - 1];
-      if (!c) { clearInterval(ticker); return; }
-
-      // Update unrealized P&L while in trade
-      if (inTradeRef.val && entryPriceRef.val > 0) {
-        // Scale: 1 unit price = $1 profit (simplified for display)
-        const pips = (c.c - entryPriceRef.val) * 100;
-        setUnrealized(pips);
+      // Live pips while in a trade
+      if (entRef.price > 0) {
+        const raw = entRef.sig === "BUY"
+          ? (candle.c - entRef.price) * 10000
+          : (entRef.price - candle.c) * 10000;
+        setLivePips(Math.round(raw));
       }
 
-      // Crossover fires -> BUY
-      if (current === BUY_CANDLE_IDX + 1) {
-        inTradeRef.val = true;
-        entryPriceRef.val = c.o;
+      // ── Trade 1 BUY ───────────────────────────────────────────────
+      if (idx === T1_BUY + 1) {
+        entRef.price = T1_ENTRY; entRef.sig = "BUY";
+        setSignal("BUY"); setEntryPrice(T1_ENTRY);
         setInTrade(true);
-        setEntryPrice(c.o);
-        setUnrealized(0);
-        setStatusText(t.s2d_status_trade1);
-        addMilestone(t.s2d_milestone_trade1, t.s2d_milestone_trade1_sub, "#10b981");
+        setStatus(`Trade 1 OPEN — BUY at ${T1_ENTRY.toFixed(5)}`);
+      }
+      if (idx === T1_TP + 1) {
+        entRef.price = 0;
+        setInTrade(false); setSignal(null); setEntryPrice(null); setLivePips(0);
+        balRef.current = START_BAL + T1_USD;
+        setBalance(balRef.current);
+        setFlash(true); later(800, () => setFlash(false));
+        setClosed(p => [...p, { n:1, signal:"BUY", pips:T1_PIPS, usd:T1_USD }]);
+        setStatus(`Trade 1 CLOSED ✓  +${T1_PIPS} pips  +$${T1_USD.toFixed(2)}`);
       }
 
-      // TP1 hit -> profit flash
-      if (current === TP1_CANDLE_IDX + 1) {
-        inTradeRef.val = false;
-        setInTrade(false);
-        setEntryPrice(null);
-        setUnrealized(0);
-        const newProfit = profitRef.current + TP1_PROFIT;
-        profitRef.current = newProfit;
-        setProfit(newProfit);
-        setFlash(true);
-        setTradeCount(1);
-        animateBalance(START_BAL + newProfit, 1200);
-        setStatusText(t.s2d_status_tp1);
-        addMilestone(t.s2d_milestone_tp1.replace("{amount}", TP1_PROFIT.toFixed(2)), t.s2d_milestone_tp1_sub, "#10b981");
-        setTimeout(() => setFlash(false), 1000);
-      }
-
-      // Second trade entry
-      if (current === BUY2_CANDLE_IDX + 1) {
-        inTradeRef.val = true;
-        entryPriceRef.val = c.o;
+      // ── Trade 2 BUY ───────────────────────────────────────────────
+      if (idx === T2_BUY + 1) {
+        entRef.price = T2_ENTRY; entRef.sig = "BUY";
+        setSignal("BUY"); setEntryPrice(T2_ENTRY);
         setInTrade(true);
-        setEntryPrice(c.o);
-        setUnrealized(0);
-        setStatusText(t.s2d_status_trade2);
-        addMilestone(t.s2d_milestone_trade2, t.s2d_milestone_trade2_sub, "#3b82f6");
+        setStatus(`Trade 2 OPEN — BUY at ${T2_ENTRY.toFixed(5)}`);
+      }
+      if (idx === T2_TP + 1) {
+        entRef.price = 0;
+        setInTrade(false); setSignal(null); setEntryPrice(null); setLivePips(0);
+        balRef.current = START_BAL + T1_USD + T2_USD;
+        setBalance(balRef.current);
+        setFlash(true); later(800, () => setFlash(false));
+        setClosed(p => [...p, { n:2, signal:"BUY", pips:T2_PIPS, usd:T2_USD }]);
+        setStatus(`Trade 2 CLOSED ✓  +${T2_PIPS} pips  +$${T2_USD.toFixed(2)}`);
       }
 
-      // TP2 hit -> second profit
-      if (current === TP2_CANDLE_IDX + 1) {
-        inTradeRef.val = false;
-        setInTrade(false);
-        setEntryPrice(null);
-        setUnrealized(0);
-        const newProfit = profitRef.current + TP2_PROFIT;
-        profitRef.current = newProfit;
-        setProfit(newProfit);
-        setFlash(true);
-        setTradeCount(2);
-        animateBalance(START_BAL + newProfit, 1200);
-        setStatusText(t.s2d_status_tp2);
-        addMilestone(t.s2d_milestone_tp1.replace("{amount}", TP2_PROFIT.toFixed(2)), t.s2d_milestone_tp2_sub, "#10b981");
-        setTimeout(() => setFlash(false), 1000);
+      // ── Trade 3 SELL ──────────────────────────────────────────────
+      if (idx === T3_SELL + 1) {
+        entRef.price = T3_ENTRY; entRef.sig = "SELL";
+        setSignal("SELL"); setEntryPrice(T3_ENTRY);
+        setInTrade(true);
+        setStatus(`Trade 3 OPEN — SELL at ${T3_ENTRY.toFixed(5)}`);
+      }
+      if (idx === T3_TP + 1) {
+        entRef.price = 0;
+        setInTrade(false); setSignal(null); setEntryPrice(null); setLivePips(0);
+        balRef.current = START_BAL + TOTAL_USD;
+        setBalance(balRef.current);
+        setFlash(true); later(800, () => setFlash(false));
+        setClosed(p => [...p, { n:3, signal:"SELL", pips:T3_PIPS, usd:T3_USD }]);
+        setStatus(`Trade 3 CLOSED ✓  +${T3_PIPS} pips  +$${T3_USD.toFixed(2)}`);
       }
 
-      if (current >= CANDLES.length) {
+      // ── End ───────────────────────────────────────────────────────
+      if (idx >= CANDLES.length) {
         clearInterval(ticker);
         setPhase("done");
-        setStatusText(t.s2d_status_done);
-        // Auto-advance to next step after results are shown
-        timerRefs.current.push(setTimeout(onContinue, 3500));
+        setStatus("Session complete — 3 trades, 3 wins, $0 effort.");
+        later(3500, onContinue);
       }
-    }, INTERVAL);
+    }, TICK);
 
-    intervalRefs.current.push(ticker);
+    intervals.current.push(ticker);
+  }, [clearAll, later, onContinue]);
 
-    at(1500, () => setStatusText(t.s2d_status_scanning));
-    at(4000, () => setStatusText(t.s2d_status_pattern));
-  }, [cleanup, animateBalance, addMilestone, at, t, onContinue]);
-
-  // Auto-start simulation immediately on mount
-  useEffect(() => {
-    startSim();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Build SVG chart data
-  const totalCandles = CANDLES.length;
-  const visible = CANDLES.slice(0, visibleCount);
-  const yMin = Math.min(...CANDLES.map((c) => c.l)) - 0.5;
-  const yMax = Math.max(...CANDLES.map((c) => c.h)) + 0.5;
-  const yRange = yMax - yMin;
-  const W = 560;
-  const H = 220;
-  const PAD = { l: 8, r: 8, t: 10, b: 10 };
-  const cW = W - PAD.l - PAD.r;
-  const cH = H - PAD.t - PAD.b;
-  const slotW = cW / totalCandles;
-  const bodyW = Math.max(2, slotW * 0.6);
-
-  const toX = (i: number) => PAD.l + (i + 0.5) * slotW;
-  const toY = (p: number) => PAD.t + cH * (1 - (p - yMin) / yRange);
-
-  // MA lines
-  const fastPoints: string[] = [];
-  const slowPoints: string[] = [];
-  for (let i = 0; i < visibleCount; i++) {
-    const f = sma(CANDLES, i, 5);
-    const s = sma(CANDLES, i, 14);
-    if (f != null) fastPoints.push(`${toX(i).toFixed(1)},${toY(f).toFixed(1)}`);
-    if (s != null) slowPoints.push(`${toX(i).toFixed(1)},${toY(s).toFixed(1)}`);
-  }
-
-  // Entry/TP reference lines
-  const showEntry = entryPrice != null && visibleCount > BUY_CANDLE_IDX;
-  const entryY = entryPrice ? toY(entryPrice) : 0;
-
-  const balanceDisplay = balance.toFixed(2);
-  const profitDisplay  = profit.toFixed(2);
-  const pnlPct         = ((profit / START_BAL) * 100).toFixed(1);
-
-  // Current price for live display
-  const lastCandle = visible[visible.length - 1];
-  const livePrice  = lastCandle ? lastCandle.c.toFixed(4) : "1.0850";
+  // ── Chart geometry ────────────────────────────────────────────────────────
+  const W = 560; const H = 190;
+  const PL = 6;  const PR = 6; const PT = 12; const PB = 12;
+  const cW = W - PL - PR; const cH = H - PT - PB;
+  const total = CANDLES.length;
+  const yMin = Math.min(...CANDLES.map(c => c.l)) - 0.0008;
+  const yMax = Math.max(...CANDLES.map(c => c.h)) + 0.0008;
+  const yR   = yMax - yMin;
+  const slotW = cW / total;
+  const bW    = Math.max(2, slotW * 0.6);
+  const toX   = (i:number) => PL + (i + 0.5) * slotW;
+  const toY   = (p:number) => PT + cH * (1 - (p - yMin) / yR);
 
   return (
     <div className="space-y-5">
+
       {/* Header */}
-      <div className="text-center space-y-2 pt-2">
-        <div className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
-          {t.s2d_badge}
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 leading-tight">
-          {t.s2d_headline}
-        </h2>
-        <p className="text-gray-500 text-sm max-w-xs mx-auto">
-          {t.s2d_subtext}
-        </p>
+      <div className="text-center space-y-1">
+        <p className="text-xs font-bold uppercase tracking-widest text-amber-500">Live Bot Demo</p>
+        <h2 className="text-2xl font-extrabold text-gray-900">Watch the Bot Trade EUR/USD</h2>
+        <p className="text-sm text-gray-400">3 trades · all winners · zero input from you</p>
       </div>
 
-      {/* Balance hero */}
+      {/* Stats bar */}
       <div
-        className={[
-          "rounded-2xl px-5 py-5 transition-all duration-500",
-          flashProfit ? "bg-emerald-600" : "bg-gray-900",
-        ].join(" ")}
+        className={`rounded-2xl px-5 py-4 transition-colors duration-500 ${flash ? "bg-emerald-600" : "bg-gray-900"}`}
       >
-        <div className="flex items-start justify-between">
+        <div className="grid grid-cols-3 gap-3 text-center">
           <div>
-            <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">
-              {t.s2d_balance_label}
-            </div>
-            <div
-              className={[
-                "text-5xl font-extrabold tabular-nums font-mono",
-                flashProfit ? "text-white" : "text-white",
-              ].join(" ")}
-            >
-              ${balanceDisplay}
-            </div>
-            {profit > 0 && (
-              <div className="mt-1.5 text-emerald-400 font-bold text-sm tabular-nums">
-                +${profitDisplay} profit &nbsp;
-                <span className="font-normal text-emerald-600/60">(+{pnlPct}%)</span>
-              </div>
-            )}
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-0.5">Pair</p>
+            <p className="text-base font-extrabold text-white font-mono">EUR/USD</p>
           </div>
-          <div className="text-right shrink-0">
-            <div className="text-xs text-gray-500 mb-1">EUR/USD</div>
-            <div className="text-xl font-bold text-white font-mono tabular-nums">
-              {livePrice}
-            </div>
-            {inTrade && (
-              <div
-                className={[
-                  "text-sm font-bold mt-1 tabular-nums font-mono",
-                  unrealized >= 0 ? "text-emerald-400" : "text-red-400",
-                ].join(" ")}
-              >
-                {unrealized >= 0 ? "+" : ""}${Math.abs(unrealized * 0.25).toFixed(2)}
-              </div>
-            )}
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-0.5">Price</p>
+            <p className="text-base font-extrabold text-white font-mono">{livePrice.toFixed(5)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-0.5">Balance</p>
+            <p className={`text-base font-extrabold font-mono ${flash ? "text-white" : "text-emerald-400"}`}>
+              ${balance.toFixed(2)}
+            </p>
           </div>
         </div>
-        {/* Trade indicators */}
-        <div className="mt-4 flex items-center gap-3">
-          <div
-            className={[
-              "flex items-center gap-1.5 text-xs rounded-full px-3 py-1 font-semibold transition-all",
-              inTrade
-                ? "bg-emerald-500/20 text-emerald-400"
-                : phase === "running"
-                ? "bg-yellow-500/10 text-yellow-400"
-                : "bg-gray-700 text-gray-500",
-            ].join(" ")}
-          >
-            <span
-              className={[
-                "w-1.5 h-1.5 rounded-full",
-                inTrade ? "bg-emerald-400 animate-pulse" : phase === "running" ? "bg-yellow-400 animate-pulse" : "bg-gray-600",
-              ].join(" ")}
-            />
-            {inTrade ? t.s2d_trade_open : phase === "running" ? t.s2d_scanning : phase === "done" ? t.s2d_complete : t.s2d_standby}
-          </div>
-          {tradeCount > 0 && (
-            <div className="text-xs text-gray-400">
-              {tradeCount} {t.s2d_trades_closed} &nbsp; · &nbsp; {tradeCount}/{tradeCount} {t.s2d_wins_label}
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* Status text */}
-      {phase !== "idle" && (
-        <div className="flex items-center gap-2 px-1">
-          {phase === "running" && (
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          )}
-          <p className="text-sm text-gray-600 italic leading-snug">{statusText}</p>
-        </div>
-      )}
-
-      {/* Milestone popups */}
-      <div className="space-y-2 min-h-[10px]">
-        {milestones.map((m) => (
-          <div
-            key={m.id}
-            className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 animate-pulse-once"
-            style={{ borderColor: m.color + "44", backgroundColor: m.color + "11" }}
-          >
-            <span className="text-xl shrink-0">
-              {m.color === "#10b981" ? "✓" : "→"}
+        {/* Live trade row */}
+        {inTrade && signal && entryPrice !== null && (
+          <div className="mt-3 pt-3 border-t border-gray-700 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className={`rounded-full px-2.5 py-0.5 text-xs font-black ${
+                signal === "BUY" ? "bg-emerald-500 text-white" : "bg-red-500 text-white"
+              }`}>{signal}</span>
+              <span className="text-xs text-gray-400 font-mono">@ {entryPrice.toFixed(5)}</span>
+            </div>
+            <span className={`text-sm font-black font-mono ${livePips >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {livePips >= 0 ? "+" : ""}{livePips} pips
             </span>
-            <div>
-              <div className="font-bold text-sm" style={{ color: m.color }}>
-                {m.text}
-              </div>
-              <div className="text-xs text-gray-500">{m.sub}</div>
-            </div>
           </div>
-        ))}
+        )}
       </div>
 
-      {/* CHART */}
-      <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
-        {/* Chart toolbar */}
-        <div className="bg-gray-900 px-4 py-2.5 flex items-center justify-between">
+      {/* Status */}
+      <div className="flex items-center gap-2 px-1 min-h-[18px]">
+        {phase === "running" && <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />}
+        {phase === "done"    && <span className="text-emerald-500 shrink-0">✓</span>}
+        <p className="text-xs text-gray-500 italic">{status}</p>
+      </div>
+
+      {/* Candlestick Chart */}
+      <div className="rounded-2xl overflow-hidden border border-gray-200">
+        {/* Toolbar */}
+        <div className="bg-gray-900 px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span
-              className={[
-                "w-2 h-2 rounded-full",
-                phase === "running" ? "bg-emerald-400 animate-pulse" : "bg-gray-600",
-              ].join(" ")}
-            />
-            <span className="text-xs text-gray-300 font-mono">
-              EUR/USD &nbsp;·&nbsp; TradePilot MA Crossover
-            </span>
+            <span className={`w-2 h-2 rounded-full ${phase === "running" ? "bg-emerald-400 animate-pulse" : "bg-gray-600"}`} />
+            <span className="text-xs text-gray-300 font-mono">EUR/USD · M1 · TradePilot Bot</span>
           </div>
-          <div className="flex items-center gap-3 text-xs font-mono">
-            <span className="flex items-center gap-1 text-blue-400">
-              <span className="inline-block w-4 h-0.5 bg-blue-400 rounded" /> Fast MA
+          {phase === "running" && (
+            <span className="text-[10px] text-gray-500 font-mono">{shown}/{CANDLES.length}</span>
+          )}
+          {phase !== "running" && (
+            <span className="flex items-center gap-1 rounded-full bg-red-600/80 px-2 py-0.5 text-[10px] font-bold text-white">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />LIVE
             </span>
-            <span className="flex items-center gap-1 text-yellow-400">
-              <span className="inline-block w-4 h-0.5 bg-yellow-400 rounded" /> Slow MA
-            </span>
-          </div>
+          )}
         </div>
 
-        {/* SVG Chart */}
-        <div className="bg-[#0d0d0d] p-2 relative">
-          <svg
-            viewBox={`0 0 ${W} ${H}`}
-            className="w-full"
-            style={{ height: "220px" }}
-            aria-label="Live EUR/USD price chart"
-          >
+        {/* SVG chart */}
+        <div className="bg-[#0d0d0d] overflow-hidden">
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 190 }}>
             {/* Grid */}
-            {[0.2, 0.4, 0.6, 0.8].map((f) => (
-              <line
-                key={f}
-                x1={PAD.l} x2={W - PAD.r}
-                y1={PAD.t + cH * f} y2={PAD.t + cH * f}
-                stroke="#1a1a1a" strokeWidth="1"
-              />
+            {[0.25,0.5,0.75].map(f => (
+              <line key={f} x1={PL} x2={W-PR} y1={PT+cH*f} y2={PT+cH*f}
+                stroke="#1a1a1a" strokeWidth="1"/>
             ))}
 
-            {/* Entry price dashed line */}
-            {showEntry && (
-              <line
-                x1={PAD.l} x2={W - PAD.r}
-                y1={entryY} y2={entryY}
-                stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" opacity="0.6"
-              />
-            )}
-            {showEntry && (
-              <text
-                x={W - PAD.r - 2} y={entryY - 4}
-                fontSize="8" fill="#10b981" textAnchor="end"
-              >
-                ENTRY
-              </text>
-            )}
-
-            {/* Slow MA */}
-            {slowPoints.length > 1 && (
-              <polyline
-                points={slowPoints.join(" ")} fill="none"
-                stroke="#f59e0b" strokeWidth="2" opacity="0.8" strokeLinejoin="round"
-              />
-            )}
-
-            {/* Fast MA */}
-            {fastPoints.length > 1 && (
-              <polyline
-                points={fastPoints.join(" ")} fill="none"
-                stroke="#3b82f6" strokeWidth="2" opacity="0.8" strokeLinejoin="round"
-              />
+            {/* Entry dashed line */}
+            {entryPrice !== null && phase === "running" && (
+              <>
+                <line x1={PL} x2={W-PR} y1={toY(entryPrice)} y2={toY(entryPrice)}
+                  stroke={signal === "BUY" ? "#10b981" : "#ef4444"}
+                  strokeWidth="1" strokeDasharray="4 3" opacity="0.7"/>
+                <text x={W-PR-2} y={toY(entryPrice)-3} fontSize="7"
+                  fill={signal === "BUY" ? "#10b981" : "#ef4444"} textAnchor="end" fontWeight="bold">
+                  ENTRY
+                </text>
+              </>
             )}
 
             {/* Candles */}
-            {visible.map((c, i) => {
-              const isGreen = c.c >= c.o;
-              const col     = isGreen ? "#10b981" : "#ef4444";
-              const x       = toX(i);
-              const openY   = toY(c.o);
-              const closeY  = toY(c.c);
-              const highY   = toY(c.h);
-              const lowY    = toY(c.l);
-              const bTop    = Math.min(openY, closeY);
-              const bH      = Math.max(1.5, Math.abs(closeY - openY));
-
+            {CANDLES.slice(0, shown).map((c,i) => {
+              const green = c.c >= c.o;
+              const col   = green ? "#10b981" : "#ef4444";
+              const x     = toX(i);
+              const bTop  = Math.min(toY(c.o), toY(c.c));
+              const bH    = Math.max(1.5, Math.abs(toY(c.c) - toY(c.o)));
               return (
                 <g key={i}>
-                  <line x1={x} y1={highY} x2={x} y2={lowY} stroke={col} strokeWidth="1" />
-                  <rect x={x - bodyW / 2} y={bTop} width={bodyW} height={bH} fill={col} rx="0.5" />
+                  <line x1={x} y1={toY(c.h)} x2={x} y2={toY(c.l)} stroke={col} strokeWidth="1"/>
+                  <rect x={x-bW/2} y={bTop} width={bW} height={bH} fill={col} rx="0.5"/>
                 </g>
               );
             })}
 
-            {/* BUY arrow */}
-            {visibleCount > BUY_CANDLE_IDX && (() => {
-              const c = CANDLES[BUY_CANDLE_IDX];
-              const x = toX(BUY_CANDLE_IDX);
-              const tipY = toY(c.l) + 18;
-              return (
-                <g>
-                  <circle cx={x} cy={tipY - 4} r="10" fill="#10b98122" />
-                  <polygon
-                    points={`${x},${tipY - 13} ${x - 7},${tipY + 1} ${x + 7},${tipY + 1}`}
-                    fill="#10b981"
-                  />
-                  <text x={x} y={tipY + 14} fontSize="8" fill="#10b981" textAnchor="middle" fontWeight="bold">
-                    BUY
-                  </text>
-                </g>
-              );
+            {/* BUY arrow T1 */}
+            {shown > T1_BUY && (()=>{
+              const x=toX(T1_BUY); const y=toY(CANDLES[T1_BUY].l)+22;
+              return <g><polygon points={`${x},${y-14} ${x-6},${y} ${x+6},${y}`} fill="#10b981"/>
+                <text x={x} y={y+11} fontSize="7" fill="#10b981" textAnchor="middle" fontWeight="bold">BUY</text></g>;
+            })()}
+            {/* TP badge T1 */}
+            {shown > T1_TP && (()=>{
+              const x=Math.min(toX(T1_TP),W-54); const y=toY(CANDLES[T1_TP].h)-20;
+              return <g><rect x={x-27} y={y} width={58} height={15} rx="3" fill="#10b981"/>
+                <text x={x+2} y={y+11} fontSize="8" fill="white" fontWeight="bold" textAnchor="middle">+{T1_PIPS} pips</text></g>;
             })()}
 
-            {/* Second BUY arrow */}
-            {visibleCount > BUY2_CANDLE_IDX && (() => {
-              const c = CANDLES[BUY2_CANDLE_IDX];
-              const x = toX(BUY2_CANDLE_IDX);
-              const tipY = toY(c.l) + 18;
-              return (
-                <g>
-                  <circle cx={x} cy={tipY - 4} r="10" fill="#3b82f622" />
-                  <polygon
-                    points={`${x},${tipY - 13} ${x - 7},${tipY + 1} ${x + 7},${tipY + 1}`}
-                    fill="#3b82f6"
-                  />
-                  <text x={x} y={tipY + 14} fontSize="8" fill="#3b82f6" textAnchor="middle" fontWeight="bold">
-                    BUY
-                  </text>
-                </g>
-              );
+            {/* BUY arrow T2 */}
+            {shown > T2_BUY && (()=>{
+              const x=toX(T2_BUY); const y=toY(CANDLES[T2_BUY].l)+22;
+              return <g><polygon points={`${x},${y-14} ${x-6},${y} ${x+6},${y}`} fill="#3b82f6"/>
+                <text x={x} y={y+11} fontSize="7" fill="#3b82f6" textAnchor="middle" fontWeight="bold">BUY</text></g>;
+            })()}
+            {/* TP badge T2 */}
+            {shown > T2_TP && (()=>{
+              const x=Math.min(toX(T2_TP),W-54); const y=toY(CANDLES[T2_TP].h)-20;
+              return <g><rect x={x-27} y={y} width={58} height={15} rx="3" fill="#3b82f6"/>
+                <text x={x+2} y={y+11} fontSize="8" fill="white" fontWeight="bold" textAnchor="middle">+{T2_PIPS} pips</text></g>;
             })()}
 
-            {/* TP1 profit badge */}
-            {visibleCount > TP1_CANDLE_IDX && (() => {
-              const c = CANDLES[TP1_CANDLE_IDX];
-              const x = Math.min(toX(TP1_CANDLE_IDX), W - 55);
-              const y = toY(c.h) - 22;
-              return (
-                <g>
-                  <rect x={x - 28} y={y} width={60} height={16} rx="4" fill="#10b981" />
-                  <text x={x + 2} y={y + 11} fontSize="9" fill="white" fontWeight="bold" textAnchor="middle">
-                    +${TP1_PROFIT.toFixed(2)}
-                  </text>
-                </g>
-              );
+            {/* SELL arrow T3 */}
+            {shown > T3_SELL && (()=>{
+              const x=toX(T3_SELL); const y=toY(CANDLES[T3_SELL].h)-22;
+              return <g><polygon points={`${x},${y+14} ${x-6},${y} ${x+6},${y}`} fill="#f59e0b"/>
+                <text x={x} y={y-6} fontSize="7" fill="#f59e0b" textAnchor="middle" fontWeight="bold">SELL</text></g>;
+            })()}
+            {/* TP badge T3 */}
+            {shown > T3_TP && (()=>{
+              const x=Math.min(toX(T3_TP),W-54); const y=toY(CANDLES[T3_TP].l)+20;
+              return <g><rect x={x-27} y={y} width={58} height={15} rx="3" fill="#f59e0b"/>
+                <text x={x+2} y={y+11} fontSize="8" fill="white" fontWeight="bold" textAnchor="middle">+{T3_PIPS} pips</text></g>;
             })()}
 
-            {/* TP2 profit badge */}
-            {visibleCount > TP2_CANDLE_IDX && (() => {
-              const c = CANDLES[TP2_CANDLE_IDX];
-              const x = Math.min(toX(TP2_CANDLE_IDX), W - 55);
-              const y = toY(c.h) - 22;
-              return (
-                <g>
-                  <rect x={x - 28} y={y} width={60} height={16} rx="4" fill="#3b82f6" />
-                  <text x={x + 2} y={y + 11} fontSize="9" fill="white" fontWeight="bold" textAnchor="middle">
-                    +${TP2_PROFIT.toFixed(2)}
-                  </text>
-                </g>
-              );
-            })()}
-
-            {/* Live cursor line */}
-            {phase === "running" && visibleCount > 0 && (
-              <line
-                x1={toX(visibleCount - 1)}
-                y1={PAD.t}
-                x2={toX(visibleCount - 1)}
-                y2={H - PAD.b}
-                stroke="#ffffff18"
-                strokeWidth="1"
-              />
+            {/* Live cursor */}
+            {phase === "running" && shown > 0 && (
+              <line x1={toX(shown-1)} y1={PT} x2={toX(shown-1)} y2={H-PB}
+                stroke="#ffffff14" strokeWidth="1"/>
             )}
           </svg>
-
-          {/* "LIVE" badge overlay */}
-          {phase === "running" && (
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-red-600/90 px-2 py-0.5 text-[10px] font-bold text-white">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              {t.live}
-            </div>
-          )}
-        </div>
-
-        {/* Chart caption */}
-        <div className="bg-[#0d0d0d] px-4 py-2 border-t border-[#1a1a1a] flex items-center justify-between">
-          <div className="flex items-center gap-4 text-[10px] font-mono">
-            <span className="flex items-center gap-1 text-emerald-500">
-              <span>▲</span> {t.s2d_chart_buy_signal}
-            </span>
-            <span className="flex items-center gap-1 text-emerald-400">
-              <span className="inline-block w-3 h-0.5 bg-emerald-400" /> {t.s2d_chart_profit_taken}
-            </span>
-          </div>
-          <div className="text-[10px] text-gray-600 font-mono">
-            {visibleCount}/{CANDLES.length} {t.s2d_chart_candles}
-          </div>
         </div>
       </div>
 
-      {/* Simple 3-step explainer */}
-      {phase === "idle" && (
-        <div className="grid grid-cols-3 gap-2 text-center">
-          {[
-            ["👁️", t.s2d_idle_step1_title, t.s2d_idle_step1_desc],
-            ["⚡", t.s2d_idle_step2_title, t.s2d_idle_step2_desc],
-            ["💰", t.s2d_idle_step3_title, t.s2d_idle_step3_desc],
-          ].map(([icon, title, desc]) => (
-            <div key={title} className="rounded-xl bg-gray-50 border border-gray-200 px-2 py-3">
-              <div className="text-xl mb-1">{icon}</div>
-              <div className="text-xs font-bold text-gray-800">{title}</div>
-              <div className="text-[10px] text-gray-400 mt-0.5 leading-tight">{desc}</div>
+      {/* Closed trades */}
+      {closed.length > 0 && (
+        <div className="space-y-2">
+          {closed.map(tr => (
+            <div key={tr.n}
+              className="flex items-center justify-between rounded-xl px-4 py-3"
+              style={{ background:"rgba(16,185,129,0.07)", border:"1px solid rgba(16,185,129,0.2)" }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-emerald-500 font-black text-lg">✓</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">
+                    Trade {tr.n}
+                    <span className={`ml-2 rounded px-1.5 py-0.5 text-xs font-black ${
+                      tr.signal === "BUY" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    }`}>{tr.signal}</span>
+                  </p>
+                  <p className="text-xs text-gray-400">EUR/USD · closed</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-black text-emerald-600">+${tr.usd.toFixed(2)}</p>
+                <p className="text-xs text-emerald-500">+{tr.pips} pips</p>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Done result card */}
+      {/* Done result summary */}
       {phase === "done" && (
-        <div className="rounded-2xl bg-emerald-50 border-2 border-emerald-200 px-5 py-5 space-y-4">
-          <div className="text-xs font-bold uppercase tracking-widest text-emerald-600">
-            {t.s2d_sim_complete}
+        <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50 px-5 py-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">Session Result</span>
+            <span className="text-xs font-semibold text-emerald-600">3 trades · 3 wins · 100%</span>
           </div>
-          <div className="flex items-end justify-between">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs text-gray-400 mb-0.5">{t.s2d_started_with}</div>
-              <div className="text-3xl font-extrabold text-gray-500 font-mono">$250.00</div>
+              <p className="text-[11px] text-gray-400 mb-0.5">Started with</p>
+              <p className="text-3xl font-extrabold text-gray-400 font-mono">$250.00</p>
             </div>
-            <div className="text-2xl text-gray-400">→</div>
+            <div className="text-2xl text-gray-300">→</div>
             <div className="text-right">
-              <div className="text-xs text-gray-400 mb-0.5">{t.s2d_ended_with}</div>
-              <div className="text-3xl font-extrabold text-emerald-700 font-mono">
-                ${(START_BAL + TOTAL_PROFIT).toFixed(2)}
-              </div>
+              <p className="text-[11px] text-gray-400 mb-0.5">Ended with</p>
+              <p className="text-3xl font-extrabold text-emerald-700 font-mono">
+                ${(START_BAL + TOTAL_USD).toFixed(2)}
+              </p>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-emerald-200 pt-3 text-sm">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-gray-600">
-                <span className="text-emerald-500 font-bold">✓</span> {t.s2d_trade1_label}
-                <span className="ml-auto font-bold text-emerald-700">+${TP1_PROFIT.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center gap-2 text-gray-600">
-                <span className="text-emerald-500 font-bold">✓</span> {t.s2d_trade2_label}
-                <span className="ml-auto font-bold text-emerald-700">+${TP2_PROFIT.toFixed(2)}</span>
-              </div>
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-200 text-center">
+            <div>
+              <p className="text-xs text-gray-400">Total pips</p>
+              <p className="text-base font-black text-emerald-700">+{T1_PIPS+T2_PIPS+T3_PIPS}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Profit</p>
+              <p className="text-base font-black text-emerald-700">+${TOTAL_USD.toFixed(2)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Win rate</p>
+              <p className="text-base font-black text-emerald-700">100%</p>
             </div>
           </div>
-          <div className="rounded-lg bg-emerald-100 px-3 py-2.5 text-xs text-emerald-700 leading-relaxed">
-            {t.s2d_result_box}
-          </div>
+          <p className="text-xs text-emerald-700 leading-relaxed">
+            The bot detected 3 setups, entered and exited each trade automatically. You did nothing.
+          </p>
         </div>
       )}
 
-      {/* ── Bank withdrawal log ──────────────────────────────────────────── */}
-      {phase === "done" && (
-        <div className="rounded-2xl bg-gray-900 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
-            <span className="text-xs font-semibold text-gray-300">{t.s2d_withdrawal_title}</span>
-            <span className="flex items-center gap-1.5 text-xs text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              {t.s2d_withdrawal_verified}
-            </span>
-          </div>
-          {[
-            { date: "Today, 09:14", name: "M. Torres", amount: "£1,247.00" },
-            { date: "Today, 07:52", name: "K. Adeyemi", amount: "£892.50" },
-            { date: "Yesterday", name: "S. Brennan", amount: "£2,104.00" },
-            { date: "Yesterday", name: "L. Fernandez", amount: "£634.75" },
-          ].map((row) => (
-            <div key={row.name} className="flex items-center justify-between px-4 py-3 border-b border-gray-800/60 last:border-0">
-              <div>
-                <p className="text-xs font-semibold text-gray-200">{row.name}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">{row.date}</p>
-              </div>
-              <span className="text-sm font-black text-emerald-400">+{row.amount}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* CTAs */}
+      {/* ── Buttons ─────────────────────────────────────────────────────── */}
       {phase === "idle" && (
         <button
-          onClick={startSim}
-          className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
-          style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
+          onClick={startBot}
+          className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-lg font-extrabold text-black shadow-lg flex items-center justify-center gap-2"
+          style={{ boxShadow:"0 4px 32px rgba(240,165,0,0.50)" }}
         >
-          {t.s2d_start_btn}
-          <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
+          ▶&nbsp;Run Bot
         </button>
       )}
 
       {phase === "running" && (
-        <div className="space-y-2">
-          <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-center text-xs text-gray-500">
-            {t.s2d_running_note}
-          </div>
-          <button
-            onClick={onContinue}
-            className="w-full rounded-xl border border-amber-300 bg-amber-50 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-100"
-          >
-            {t.s2d_cta} →
-          </button>
+        <div className="rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-center">
+          <p className="text-xs text-gray-400 flex items-center justify-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Bot is active — watch the chart above
+          </p>
         </div>
       )}
 
@@ -749,34 +460,32 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
           <button
             onClick={onContinue}
             className="btn-gold-gradient group w-full rounded-2xl px-6 py-4 text-base font-bold text-black shadow-lg flex items-center justify-center gap-2"
-            style={{ boxShadow: "0 4px 32px rgba(240,165,0,0.50)" }}
+            style={{ boxShadow:"0 4px 32px rgba(240,165,0,0.50)" }}
           >
-            {t.s2d_cta}
-            <span className="transition-transform duration-150 group-hover:translate-x-1.5">→</span>
+            I want this on my account →
           </button>
           <button
             onClick={() => {
               setPhase("idle");
-              setVisible(0);
+              setShown(0);
               setBalance(START_BAL);
-              setProfit(0);
-              setInTrade(false);
+              setLivePrice(CANDLES[0].c);
+              setSignal(null);
               setEntryPrice(null);
-              setUnrealized(0);
-              setMilestones([]);
-              setTradeCount(0);
-              setStatusText(t.s2d_status_initial);
-              balRef.current = START_BAL;
-              profitRef.current = 0;
+              setLivePips(0);
+              setInTrade(false);
+              setClosed([]);
+              setFlash(false);
+              setStatus("Bot ready. Press Run Bot.");
             }}
-            className="w-full rounded-xl border border-gray-200 bg-white py-3 text-sm text-gray-500 transition hover:border-gray-400"
+            className="w-full rounded-xl border border-gray-200 bg-white py-3 text-sm text-gray-400 hover:border-gray-300 transition"
           >
-            {t.s2d_watch_again}
+            ↺ Watch again
           </button>
         </div>
       )}
 
-      <RiskDisclaimer />
+      <RiskDisclaimer compact />
     </div>
   );
 }
