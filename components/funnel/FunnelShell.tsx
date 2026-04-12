@@ -169,6 +169,12 @@ export default function FunnelShell() {
     setStep(next);
   }, []);
 
+  // ── Progress bar helpers ──────────────────────────────────────────────────
+  const PROGRESS_STEPS: AgStep[] = ["S2_PAIN", "S3_QUIZ", "S4_REVEAL", "S5_SCARCITY", "S6_LEAD"];
+  const progressIdx = PROGRESS_STEPS.indexOf(step as AgStep);
+  const showProgress = progressIdx >= 0;
+  const progressPct = showProgress ? Math.round(((progressIdx + 1) / PROGRESS_STEPS.length) * 100) : 0;
+
   // ── Layout wrapper ─────────────────────────────────────────────────────────
   function Shell({ children }: { children: React.ReactNode }) {
     return (
@@ -181,6 +187,23 @@ export default function FunnelShell() {
           onStay={() => {}}
           onLeave={() => {}}
         />
+
+        {/* Progress bar — visible on every step except S1 */}
+        {showProgress && (
+          <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 py-2.5">
+            <div className="mx-auto max-w-xl flex items-center gap-3">
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-100">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progressPct}%`, background: "linear-gradient(90deg,#f0a500,#f5b523)" }}
+                />
+              </div>
+              <span className="text-xs font-semibold tabular-nums shrink-0" style={{ color: "#f0a500" }}>
+                {progressIdx + 1}/{PROGRESS_STEPS.length}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Centered content card  max-w-xl for comfortable tablet view */}
         <div className="mx-auto max-w-xl px-4 sm:px-6 py-5 sm:py-8 md:py-12">
@@ -206,7 +229,7 @@ export default function FunnelShell() {
         <Section2Pain
           onChoice={(c) => {
             setPainChoice(c);
-            advance("S2B_INTRO");
+            advance("S3_QUIZ");
           }}
         />
       </Shell>

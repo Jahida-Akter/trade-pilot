@@ -31,7 +31,6 @@ export default function Section1Hook({ onContinue }: Props) {
   const [pulse, setPulse]           = useState(false);
   const [countIn, setCountIn]       = useState(false);
   const [started, setStarted]       = useState(0);   // strong call counter
-  const [mindAnswer, setMindAnswer] = useState<"nothing" | "works" | null>(null);
   const [feedIdx, setFeedIdx]       = useState(0);
   const [feedVisible, setFeedVisible] = useState(true);
   const [showSticky, setShowSticky]   = useState(false);
@@ -263,10 +262,9 @@ export default function Section1Hook({ onContinue }: Props) {
           {t.s1_mind_question}
         </p>
 
-        {mindAnswer === null ? (
-          <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() => setMindAnswer("nothing")}
+              onClick={onContinue}
               className="rounded-xl border px-4 py-3.5 text-sm font-semibold text-gray-700 text-left transition-all duration-200 hover:border-amber-500/60 active:scale-95"
               style={{ background: "rgba(0,0,0,0.02)", borderColor: "rgba(0,0,0,0.1)" }}
             >
@@ -274,7 +272,7 @@ export default function Section1Hook({ onContinue }: Props) {
               {t.s1_mind_nothing}
             </button>
             <button
-              onClick={() => setMindAnswer("works")}
+              onClick={onContinue}
               className="rounded-xl border px-4 py-3.5 text-sm font-semibold text-gray-700 text-left transition-all duration-200 hover:border-amber-500/60 active:scale-95"
               style={{ background: "rgba(0,0,0,0.02)", borderColor: "rgba(0,0,0,0.1)" }}
             >
@@ -282,48 +280,6 @@ export default function Section1Hook({ onContinue }: Props) {
               {t.s1_mind_works}
             </button>
           </div>
-        ) : mindAnswer === "nothing" ? (
-          <div
-            className="rounded-xl p-4 space-y-2"
-            style={{ background: "rgba(240,165,0,0.06)", border: "1px solid rgba(240,165,0,0.2)" }}
-          >
-            <p className="text-sm font-bold" style={{ color: "#f0a500" }}>
-              {t.s1_mind_nothing_title}
-            </p>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              {t.s1_mind_nothing_body}
-            </p>
-            <p className="text-xs font-semibold text-gray-700">
-              {t.s1_mind_nothing_footer}
-            </p>
-            <button
-              onClick={onContinue}
-              className="mt-1 w-full rounded-xl px-4 py-3 text-sm font-bold text-black transition-all duration-150 active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg,#f0a500,#d4840a)", boxShadow: "0 2px 14px rgba(240,165,0,0.35)" }}
-            >
-              {t.s1_mind_cta_nothing}
-            </button>
-          </div>
-        ) : (
-          <div
-            className="rounded-xl p-4 space-y-2"
-            style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.18)" }}
-          >
-            <p className="text-sm font-bold text-emerald-400">
-              {t.s1_mind_works_title}
-            </p>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              {t.s1_mind_works_body}
-            </p>
-            <button
-              onClick={onContinue}
-              className="mt-1 w-full rounded-xl px-4 py-3 text-sm font-bold text-black transition-all duration-150 active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg,#f0a500,#d4840a)", boxShadow: "0 2px 14px rgba(240,165,0,0.35)" }}
-            >
-              {t.s1_mind_cta_works}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ── SPIDER WEB: Live Activity Feed ───────────────────────────────── */}
@@ -413,39 +369,6 @@ export default function Section1Hook({ onContinue }: Props) {
             <p className="text-xs text-gray-400">{item.line2}</p>
           </div>
         ))}
-      </div>
-
-      {/* ── Deposit transparency block ────────────────────────────────── */}
-      <div
-        className="animate-fade-in-up delay-600 rounded-2xl p-4 sm:p-5"
-        style={{
-          background: "#ffffff",
-          border: "1px solid rgba(240,165,0,0.18)",
-        }}
-      >
-        <div className="flex items-start gap-3">
-          <span className="text-xl shrink-0 mt-0.5">💡</span>
-          <div className="space-y-2">
-            <p className="text-sm font-bold text-gray-900">
-              {t.s1_deposit_title}
-            </p>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              {t.s1_deposit_body}
-            </p>
-            <div className="grid grid-cols-3 gap-2 pt-1">
-              {[
-                { label: t.s1_deposit_own1, sub: t.s1_deposit_own2 },
-                { label: t.s1_deposit_with1, sub: t.s1_deposit_with2 },
-                { label: t.s1_deposit_reg1, sub: t.s1_deposit_reg2 },
-              ].map((i) => (
-                <div key={i.label} className="rounded-lg p-2 text-center" style={{ background: "rgba(240,165,0,0.04)", border: "1px solid rgba(240,165,0,0.12)" }}>
-                  <p className="text-xs font-bold text-gray-700">{i.label}</p>
-                  <p className="text-xs text-gray-400">{i.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* ── Primary CTA ──────────────────────────────────────────────────── */}
