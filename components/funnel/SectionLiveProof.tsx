@@ -181,8 +181,8 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
     balRef.current = START_BAL;
     profitRef.current = 0;
 
-    // Candle ticker: one new candle every ~900ms = ~54s for 60 candles
-    const INTERVAL = 900;
+    // Candle ticker: one new candle every ~350ms = ~21s for 60 candles
+    const INTERVAL = 350;
     let current = 0;
     const entryPriceRef = { val: 0 };
     const inTradeRef = { val: false };
@@ -261,14 +261,16 @@ export default function SectionLiveProof({ onContinue }: { onContinue: () => voi
         clearInterval(ticker);
         setPhase("done");
         setStatusText(t.s2d_status_done);
+        // Auto-advance to next step after results are shown
+        timerRefs.current.push(setTimeout(onContinue, 3500));
       }
     }, INTERVAL);
 
     intervalRefs.current.push(ticker);
 
-    at(2000, () => setStatusText(t.s2d_status_scanning));
-    at(8000, () => setStatusText(t.s2d_status_pattern));
-  }, [cleanup, animateBalance, addMilestone, at, t]);
+    at(1500, () => setStatusText(t.s2d_status_scanning));
+    at(4000, () => setStatusText(t.s2d_status_pattern));
+  }, [cleanup, animateBalance, addMilestone, at, t, onContinue]);
 
   // Auto-start simulation immediately on mount
   useEffect(() => {

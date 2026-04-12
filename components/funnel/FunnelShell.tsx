@@ -170,7 +170,7 @@ export default function FunnelShell() {
   }, []);
 
   // ── Progress bar helpers ──────────────────────────────────────────────────
-  const PROGRESS_STEPS: AgStep[] = ["S2_PAIN", "S3_QUIZ", "S4_REVEAL", "S5_SCARCITY", "S6_LEAD"];
+  const PROGRESS_STEPS: AgStep[] = ["S2_PAIN", "S2D_PROOF", "S3_QUIZ", "S4_REVEAL", "S5_SCARCITY", "S6_LEAD"];
   const progressIdx = PROGRESS_STEPS.indexOf(step as AgStep);
   const showProgress = progressIdx >= 0;
   const progressPct = showProgress ? Math.round(((progressIdx + 1) / PROGRESS_STEPS.length) * 100) : 0;
@@ -229,7 +229,7 @@ export default function FunnelShell() {
         <Section2Pain
           onChoice={(c) => {
             setPainChoice(c);
-            advance("S3_QUIZ");
+            advance("S2D_PROOF");
           }}
         />
       </Shell>
